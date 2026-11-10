@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/bow",
-  "textures": {
-    "layer0": "combat_reforged:item/certus_quartz_bow_pulling_2"
-  }
-}

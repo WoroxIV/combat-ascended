@@ -24,6 +24,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import com.combatreforged.CombatReforged;
+import com.combatreforged.tutorial.DemoWeapon;
+import com.combatreforged.tutorial.SceneItem;
+import net.minecraft.client.model.ShieldModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import java.util.function.Function;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -36,6 +45,11 @@ import java.util.List;
  * Tout fonctionne donc aussi depuis le menu principal.
  */
 final class TutorialRenderer {
+    /** Sert seulement à appeler le rendu du jeu : la forme et la texture viennent du modèle de démonstration. */
+    private static final ItemStack DEMO_STAND_IN = new ItemStack(Items.STICK);
+    private static final ResourceLocation DEMO_SHIELD_TEXTURE = ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "textures/tutorial/iron_shield.png");
+    /** Trouve un modèle de démonstration chargé : la façon de faire dépend du chargeur. */
+
     /** Pleine lumière. */
     private static final int LIGHT = 15728880;
     private static final int PLATFORM_RADIUS = 4;
@@ -251,15 +265,33 @@ final class TutorialRenderer {
     }
 
     /** Même placement que le calque vanilla des objets en main. */
-    private void drawHeldItem(PoseStack pose, MultiBufferSource buffers, ModelPart arm, ItemStack stack, boolean leftHand, HumanoidModel<?> model) {
-        if (stack.isEmpty()) return;
+    private void drawHeldItem(PoseStack pose, MultiBufferSource buffers, ModelPart arm, SceneItem item, boolean leftHand, HumanoidModel<?> model) {
+        if (item.isEmpty()) return;
         pose.pushPose();
         model.translateToHand(leftHand ? net.minecraft.world.entity.HumanoidArm.LEFT : net.minecraft.world.entity.HumanoidArm.RIGHT, pose);
         pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
         pose.mulPose(Axis.YP.rotationDegrees(180.0F));
         pose.translate((leftHand ? -1.0F : 1.0F) / 16.0F, 0.125F, -0.625F);
         ItemDisplayContext context = leftHand ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
-        minecraft.getItemRenderer().renderStatic(null, stack, context, leftHand, pose, buffers, null, LIGHT, OverlayTexture.NO_OVERLAY, 0);
+        if (DemoWeapon.IRON_SHIELD.equals(item)) {
+            drawDemoShield(pose, buffers, context, leftHand);
+        } else if (item.model() != null) {
+            minecraft.getItemRenderer().render(DEMO_STAND_IN, context, leftHand, pose, buffers, LIGHT, OverlayTexture.NO_OVERLAY, TutorialRendering.model(item.model()));
+        } else {
+            minecraft.getItemRenderer().renderStatic(null, item.stack(), context, leftHand, pose, buffers, null, LIGHT, OverlayTexture.NO_OVERLAY, 0);
+        }
+        pose.popPose();
+    }
+
+    /** Le bouclier de démonstration : le modèle du bouclier vanilla, placé comme lui, avec sa propre texture. */
+    private void drawDemoShield(PoseStack pose, MultiBufferSource buffers, ItemDisplayContext context, boolean leftHand) {
+        BakedModel vanilla = minecraft.getItemRenderer().getModel(new ItemStack(Items.SHIELD), null, null, 0);
+        vanilla.getTransforms().getTransform(context).apply(leftHand, pose);
+        pose.translate(-0.5F, -0.5F, -0.5F);
+        pose.pushPose();
+        pose.scale(1.0F, -1.0F, -1.0F);
+        ShieldModel shield = new ShieldModel(minecraft.getEntityModels().bakeLayer(ModelLayers.SHIELD));
+        shield.renderToBuffer(pose, buffers.getBuffer(RenderType.entitySolid(DEMO_SHIELD_TEXTURE)), LIGHT, OverlayTexture.NO_OVERLAY);
         pose.popPose();
     }
 

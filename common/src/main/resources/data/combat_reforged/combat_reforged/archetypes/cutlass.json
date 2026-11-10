@@ -1,0 +1,22 @@
+{
+  "parent": "combat_reforged:sword",
+  "sweep": {
+    "radius": 1.25
+  },
+  "combo": {
+    "enabled": true,
+    "reset_after_seconds": 2.5,
+    "max_bonus_damage": 12,
+    "steps": [
+      {},
+      {},
+      {
+        "radius": 3.0,
+        "angle": 120,
+        "damage_multiplier": 1.25,
+        "cooldown_multiplier": 1.25,
+        "gesture": "slash"
+      }
+    ]
+  }
+}

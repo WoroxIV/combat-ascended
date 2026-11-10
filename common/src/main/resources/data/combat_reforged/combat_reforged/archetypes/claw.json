@@ -1,0 +1,5 @@
+{
+  "parent": "combat_reforged:dagger",
+  "reach_bonus": -1.0,
+  "ability": "none"
+}

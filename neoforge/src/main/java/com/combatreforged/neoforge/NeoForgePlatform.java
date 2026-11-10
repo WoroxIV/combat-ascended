@@ -1,7 +1,6 @@
 package com.combatreforged.neoforge;
 
 import com.combatreforged.CombatReforged;
-import com.combatreforged.config.LegacyConfigMigration;
 import com.combatreforged.platform.Platform;
 import com.combatreforged.platform.Registered;
 import com.combatreforged.registry.ModAttributes;
@@ -163,12 +162,6 @@ final class NeoForgePlatform implements Platform {
     @Override
     public ServerPlayer createFakePlayer(ServerLevel level) {
         return FakePlayerFactory.getMinecraft(level);
-    }
-
-    @Override
-    public void migrateLegacyConfig() {
-        LegacyConfigMigration.migrateClientConfig();
-        LegacyConfigMigration.migrateIfPresent();
     }
 
     private static final class ArmorPenetrationAttribute extends PercentageAttribute {

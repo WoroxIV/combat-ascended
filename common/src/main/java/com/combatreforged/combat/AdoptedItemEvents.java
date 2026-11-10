@@ -3,7 +3,6 @@ package com.combatreforged.combat;
 import com.combatreforged.data.RulesDefinition;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.registry.ModAttributes;
 import net.minecraft.core.Holder;
 import net.minecraft.world.InteractionHand;
@@ -18,8 +17,8 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
- * Ce que {@link WeaponItem} fait lui-même pour les armes du mod, version événements pour les objets adoptés
- * par un fichier d'arme (voir {@link WeaponProfiles}). Les effets à l'impact, la pose et la zone de balayage
+ * Le comportement des objets qui ont un profil d'arme (voir {@link WeaponProfiles}), branché sur les événements du jeu :
+ * un mod d'armes n'a rien à appeler. Les effets à l'impact, la pose et la zone de balayage
  * sont dans ItemStackMixin et PlayerCombatMixin.
  */
 public final class AdoptedItemEvents {
@@ -29,7 +28,7 @@ public final class AdoptedItemEvents {
     }
 
     /**
-     * Clic droit : même logique que {@link WeaponItem#use}. Appelé côté client puis côté serveur.
+     * Clic droit : lance la capacité de l'arme si ses conditions sont remplies. Appelé côté client puis côté serveur.
      *
      * @return vrai si la capacité de l'arme a été utilisée
      */
@@ -46,19 +45,22 @@ public final class AdoptedItemEvents {
         return true;
     }
 
-    /** Pénétration d'armure et balayage de l'arme, dans la main principale ; les dégâts, la vitesse et la portée restent ceux de l'objet. */
+    /** Portée, pénétration d'armure et balayage de l'arme, dans la main principale ; les dégâts et la vitesse restent ceux de l'objet. */
     public static void collectModifiers(ItemStack stack, BiConsumer<Holder<Attribute>, AttributeModifier> output) {
-        Optional<WeaponProfiles.Profile> profile = WeaponProfiles.of(stack).filter(WeaponProfiles.Profile::adopted);
+        Optional<WeaponProfiles.Profile> profile = WeaponProfiles.of(stack);
         if (profile.isEmpty()) return;
 
         RulesDefinition rules = WeaponData.rules();
         WeaponDefinition definition = profile.get().definition();
+        if (rules.reachActive() && definition.reachBonus() != 0.0D) {
+            output.accept(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(WeaponActions.BASE_REACH_ID, definition.reachBonus(), AttributeModifier.Operation.ADD_VALUE));
+        }
         if (rules.armorPenetrationActive() && definition.armorPenetration() > 0.0D) {
             output.accept(ModAttributes.armorPenetration(), new AttributeModifier(ModAttributes.BASE_ARMOR_PENETRATION_ID,
                     definition.armorPenetration() / PERCENT, AttributeModifier.Operation.ADD_VALUE));
         }
         if (rules.sweepActive() && definition.sweep().enabled() && definition.sweep().damageRatio() > 0.0D) {
-            output.accept(Attributes.SWEEPING_DAMAGE_RATIO, new AttributeModifier(WeaponItem.BASE_SWEEPING_RATIO_ID,
+            output.accept(Attributes.SWEEPING_DAMAGE_RATIO, new AttributeModifier(WeaponActions.BASE_SWEEPING_RATIO_ID,
                     definition.sweep().damageRatio() / PERCENT, AttributeModifier.Operation.ADD_VALUE));
         }
     }

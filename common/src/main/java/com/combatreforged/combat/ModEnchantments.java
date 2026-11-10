@@ -5,11 +5,12 @@ import com.combatreforged.data.RulesDefinition;
 import com.combatreforged.data.WeaponAbility;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -37,29 +38,21 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Les enchantements du mod. Ils sont déclarés dans data/combat_reforged/enchantment/ (coût, niveaux, objets acceptés)
- * et leurs effets sont ici et dans {@link EnchantmentEvents}.
+ * Les enchantements du mod : Reflective, Riposte et Élan, liés à la parade et au dash.
+ * Ils sont déclarés dans data/combat_reforged/enchantment/ (coût, niveaux, objets acceptés).
  */
 public final class ModEnchantments {
     public static final ResourceKey<Enchantment> REFLECTIVE = key("reflective");
-    public static final ResourceKey<Enchantment> VAMPIRISM = key("vampirism");
     public static final ResourceKey<Enchantment> RIPOSTE = key("riposte");
     public static final ResourceKey<Enchantment> MOMENTUM = key("momentum");
-    public static final ResourceKey<Enchantment> EXECUTION = key("execution");
-    public static final ResourceKey<Enchantment> BLEEDING = key("bleeding");
-    public static final ResourceKey<Enchantment> RETURNING = key("returning");
 
-    public static final List<ResourceKey<Enchantment>> ALL = List.of(REFLECTIVE, VAMPIRISM, RIPOSTE, MOMENTUM, EXECUTION, BLEEDING, RETURNING);
+    public static final List<ResourceKey<Enchantment>> ALL = List.of(REFLECTIVE, RIPOSTE, MOMENTUM);
 
+    private static final String DESCRIPTION_PREFIX = "enchantment." + CombatReforged.MODID + ".";
     private static final double REFLECT_PER_LEVEL = 0.1D;
-    private static final double VAMPIRISM_PER_LEVEL = 0.1D;
-    /** Plus la valeur est petite, plus le soin plafonne vite sur les gros coups. */
-    private static final double VAMPIRISM_CURVE = 2.0D;
     public static final double RIPOSTE_PERCENT_PER_LEVEL = 25.0D;
     private static final double MOMENTUM_PER_LEVEL = 0.15D;
     private static final double MOMENTUM_MIN_MULTIPLIER = 0.25D;
-    public static final double EXECUTION_PER_LEVEL = 0.1D;
-    public static final double EXECUTION_HEALTH_THRESHOLD = 0.3D;
     /** Recul de base d'un coup renvoyé, comme un coup normal. */
     private static final double REFLECT_KNOCKBACK = 0.4D;
     private static final int REFLECT_POISON_TICKS = 140;
@@ -96,9 +89,24 @@ public final class ModEnchantments {
         return Optional.empty();
     }
 
-    /** Soin de Vampirisme : proportionnel sur les petits coups, puis logarithmique pour ne pas rendre un joueur intuable. */
-    public static double vampirismHeal(double damage, int level) {
-        return VAMPIRISM_CURVE * Math.log1p(damage * level * VAMPIRISM_PER_LEVEL / VAMPIRISM_CURVE);
+    /** Vrai pour nos trois enchantements. Un enchantement ne connaît pas sa propre clé : on reconnaît sa description. */
+    public static boolean followsAbility(Enchantment enchantment) {
+        Component description = enchantment.description();
+        return description.getContents() instanceof TranslatableContents translatable && translatable.getKey().startsWith(DESCRIPTION_PREFIX);
+    }
+
+    /** Décision d'après la capacité : parade pour Reflective et Riposte, dash pour Élan. Sans profil, le tag de l'enchantement décide. */
+    public static Optional<Boolean> supportedByAbility(ItemStack stack, Enchantment enchantment) {
+        Optional<WeaponDefinition> definition = WeaponProfiles.definition(stack);
+        if (definition.isEmpty() || !(enchantment.description().getContents() instanceof TranslatableContents translatable)) return Optional.empty();
+        RulesDefinition rules = WeaponData.rules();
+        boolean parries = definition.get().ability() == WeaponAbility.PARRY;
+        return switch (translatable.getKey().substring(DESCRIPTION_PREFIX.length())) {
+            case "reflective" -> Optional.of(parries && rules.parryActive());
+            case "riposte" -> Optional.of(parries && rules.perfectParryActive());
+            case "momentum" -> Optional.of(definition.get().ability() == WeaponAbility.DASH && rules.dashActive());
+            default -> Optional.empty();
+        };
     }
 
     /** Borné : un niveau obtenu par commande ou par un mod ne doit pas supprimer la recharge. */
@@ -130,7 +138,7 @@ public final class ModEnchantments {
         ItemStack attackerWeapon = attacker.getMainHandItem();
         DamageSource reflected = defender.damageSources().thorns(defender);
         attacker.hurt(reflected, (float) (damage * enchantmentLevel * REFLECT_PER_LEVEL));
-        WeaponItem.applyOnHitEffects(attackerWeapon, attacker, defender);
+        WeaponActions.applyOnHitEffects(attackerWeapon, attacker, defender);
         EnchantmentHelper.doPostAttackEffectsWithItemSource(world, attacker, reflected, attackerWeapon);
         applyNaturalEffect(attacker, defender);
         pushBack(attacker, defender, REFLECT_KNOCKBACK + attacker.getAttributeValue(Attributes.ATTACK_KNOCKBACK));

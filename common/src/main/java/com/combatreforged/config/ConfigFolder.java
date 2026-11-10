@@ -1,6 +1,5 @@
 package com.combatreforged.config;
 
-import com.combatreforged.platform.Platform;
 import com.combatreforged.CombatReforged;
 import com.combatreforged.data.FieldSet;
 import com.combatreforged.data.GearDefinition;
@@ -8,8 +7,9 @@ import com.combatreforged.data.JsonUtil;
 import com.combatreforged.data.RulesDefinition;
 import com.combatreforged.data.WeaponDataLoader;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponType;
+import com.combatreforged.platform.Platform;
 import com.google.gson.JsonObject;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +28,10 @@ import java.util.Optional;
  * ├── rules.schema.json
  * ├── gear.schema.json
  * ├── rules.json            règles globales modifiées par l'utilisateur (jamais écrasé)
- * ├── gear.json             réglages de l'équipement modifiés par l'utilisateur (jamais écrasé)
- * ├── weapons/&lt;type&gt;.json   stats modifiées par l'utilisateur (jamais écrasés)
+ * ├── gear.json             réglages de la parade au bouclier (jamais écrasé)
+ * ├── detection.json        mots-clés ajoutés à la détection automatique (facultatif)
+ * ├── weapons/&lt;mod&gt;/&lt;nom&gt;.json     fichiers d'armes créés ou modifiés (jamais écrasés)
+ * ├── archetypes/&lt;mod&gt;/&lt;nom&gt;.json  archétypes créés ou modifiés (jamais écrasés)
  * └── defaults/             copie des valeurs par défaut du mod, réécrite à chaque lancement
  * </pre>
  * Les fichiers de l'utilisateur ne contiennent que ce qu'il change : le reste suit les valeurs du mod,
@@ -38,9 +40,12 @@ import java.util.Optional;
 public final class ConfigFolder {
     public static final String README_FILE = "README.txt";
     public static final String WEAPON_SCHEMA = "weapon.schema.json";
+    /** Lien vers le schéma depuis weapons/&lt;mod&gt;/&lt;nom&gt;.json ou archetypes/&lt;mod&gt;/&lt;nom&gt;.json. */
+    public static final String WEAPON_SCHEMA_FROM_DATA = "../../" + WEAPON_SCHEMA;
     public static final String RULES_SCHEMA = "rules.schema.json";
     public static final String GEAR_SCHEMA = "gear.schema.json";
     private static final String DEFAULTS_DIRECTORY = "defaults";
+    private static final String DETECTION_FILE = "detection.json";
 
     private ConfigFolder() {
     }
@@ -49,8 +54,9 @@ public final class ConfigFolder {
         return Platform.get().configDir().resolve(CombatReforged.MODID);
     }
 
-    public static Path weaponFile(WeaponType type) {
-        return root().resolve(WeaponDataLoader.weaponPath(type));
+    /** Fichier d'un archétype ou d'une arme : &lt;dossier&gt;/&lt;mod&gt;/&lt;nom&gt;.json. */
+    public static Path dataFile(String directory, ResourceLocation id) {
+        return root().resolve(directory).resolve(id.getNamespace()).resolve(id.getPath() + ".json");
     }
 
     public static Path rulesFile() {
@@ -61,7 +67,11 @@ public final class ConfigFolder {
         return root().resolve(WeaponDataLoader.GEAR_FILE);
     }
 
-    /** Chemin affiché dans les messages, relatif au dossier du jeu, ex : "config/combat_reforged/weapons/katana.json". */
+    public static Path detectionFile() {
+        return root().resolve(DETECTION_FILE);
+    }
+
+    /** Chemin affiché dans les messages, relatif au dossier du jeu, ex : "config/combat_reforged/rules.json". */
     public static String displayPath(Path file) {
         Path gameDirectory = Platform.get().gameDir();
         Path shown = file.startsWith(gameDirectory) ? gameDirectory.relativize(file) : file;
@@ -75,9 +85,9 @@ public final class ConfigFolder {
      */
     public static void prepare(String languageCode) {
         try {
-            Files.createDirectories(root().resolve(WeaponDataLoader.WEAPONS_DIRECTORY));
-            // Avant de créer les fichiers vides : la migration y écrit les anciennes valeurs modifiées.
-            Platform.get().migrateLegacyConfig();
+            Files.createDirectories(root());
+            // Avant de créer les fichiers vides : l'import y écrit les réglages de Better Weaponry 2.0.
+            LegacyBetterWeaponry.importConfig();
             createUserFiles();
             writeDefaults();
 
@@ -94,11 +104,7 @@ public final class ConfigFolder {
         }
     }
 
-    /** Un fichier vide par arme, relié au schéma : il suffit d'y ajouter les champs à changer. Jamais écrasés. */
     private static void createUserFiles() throws IOException {
-        for (WeaponType type : WeaponType.values()) {
-            createIfAbsent(weaponFile(type), withSchema(new JsonObject(), "../" + WEAPON_SCHEMA));
-        }
         createIfAbsent(rulesFile(), withSchema(new JsonObject(), "./" + RULES_SCHEMA));
         createIfAbsent(gearFile(), withSchema(new JsonObject(), "./" + GEAR_SCHEMA));
     }
@@ -106,8 +112,8 @@ public final class ConfigFolder {
     /** Copie des valeurs par défaut du jar, réécrite à chaque lancement pour rester à jour. */
     private static void writeDefaults() throws IOException {
         Path defaults = root().resolve(DEFAULTS_DIRECTORY);
-        for (WeaponType type : WeaponType.values()) {
-            String path = WeaponDataLoader.weaponPath(type);
+        for (String name : WeaponDataLoader.builtinArchetypeNames()) {
+            String path = WeaponDataLoader.builtinArchetypePath(name);
             Optional<JsonObject> json = WeaponDataLoader.builtinJson(path);
             if (json.isPresent()) writeJson(defaults.resolve(path), withSchema(json.get(), "../../" + WEAPON_SCHEMA));
         }

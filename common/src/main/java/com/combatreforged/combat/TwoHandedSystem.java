@@ -1,6 +1,5 @@
 package com.combatreforged.combat;
 
-import com.combatreforged.item.WeaponItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
@@ -13,9 +12,9 @@ public final class TwoHandedSystem {
     private TwoHandedSystem() {
     }
 
-    /** Toujours faux si les armes à deux mains sont coupées (rules.json, Better Combat, Epic Fight). */
+    /** Toujours faux si les armes à deux mains sont coupées (rules.json, Better Combat). */
     public static boolean isOffhandLocked(Player player) {
-        return WeaponItem.isTwoHanded(player.getMainHandItem());
+        return WeaponActions.isTwoHanded(player.getMainHandItem());
     }
 
     /** Cette main ne peut rien faire : c'est la main secondaire, et le joueur tient une arme à deux mains. */

@@ -50,12 +50,11 @@ public abstract class MobMixin implements ICombatMob {
 
     /**
      * Une fois sur deux, c'est l'arme secondaire qui frappe : mains échangées le temps du coup, bonus compris.
-     * Une arme du mod frappe comme une épée du même matériau ({@link MobCombat#hitLikeSword}).
      */
     @WrapMethod(method = "doHurtTarget")
     private boolean combatreforged$alternateHands(Entity target, Operation<Boolean> original) {
         Mob mob = (Mob) (Object) this;
-        BooleanSupplier attack = () -> MobCombat.hitLikeSword(mob, () -> original.call(target));
+        BooleanSupplier attack = () -> original.call(target);
         if (!DualWieldSystem.isDualWielding(mob)) return attack.getAsBoolean();
         boolean offhand = MobCombat.isOffhandTurn(mob);
         MobCombat.setOffhandTurn(mob, !offhand);

@@ -1,30 +1,15 @@
 package com.combatreforged.neoforge;
 
 import com.combatreforged.CombatReforged;
-import com.combatreforged.datagen.BetterCombatAttributesProvider;
-import com.combatreforged.datagen.ModItemModelProvider;
-import com.combatreforged.datagen.ModItemTagsProvider;
-import com.combatreforged.datagen.ModRecipeProvider;
 import com.combatreforged.datagen.lang.ModLanguageProvider;
 import com.combatreforged.platform.Platform;
-import com.combatreforged.registry.ModLootModifiers;
 import com.combatreforged.registry.ModStats;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /** Point d'entrée NeoForge (chargé côté client et serveur). */
 @Mod(CombatReforged.MODID)
@@ -33,9 +18,7 @@ public final class CombatReforgedNeoForge {
     public CombatReforgedNeoForge(IEventBus modEventBus) {
         Platform.set(new NeoForgePlatform(modEventBus));
         CombatReforged.init();
-        ModLootModifiers.SERIALIZERS.register(modEventBus);
 
-        modEventBus.addListener(this::addToCreativeTab);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::commonSetup);
     }
@@ -45,37 +28,10 @@ public final class CombatReforgedNeoForge {
         CombatReforged.prepareConfigFolder();
     }
 
-    /** Le bouclier, l'arc et l'arbalète vanilla sont remplacés par ceux du mod, qui ont leur propre onglet. */
-    private void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() != CreativeModeTabs.COMBAT) return;
-
-        for (Item replaced : List.of(Items.SHIELD, Items.BOW, Items.CROSSBOW)) {
-            event.remove(new ItemStack(replaced), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-        }
-    }
-
-    /** Lancé par "gradlew :neoforge:runData" : génère modèles, traductions, tags, recettes et fichiers Better Combat. */
+    /** Lancé par "gradlew :neoforge:runData" : génère les traductions. */
     private void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-
-        generator.addProvider(event.includeClient(),
-                new ModItemModelProvider(output, event.getExistingFileHelper()));
-
-        // Fichiers de langue, construits depuis common/src/main/lang/ (voir ModLanguageProvider)
         generator.addProvider(event.includeClient(), new ModLanguageProvider(output));
-
-        generator.addProvider(event.includeServer(),
-                new ModRecipeProvider(output, event.getLookupProvider()));
-
-        // Fichiers lus par Better Combat (mod optionnel) : un preset d'attaques par arme
-        generator.addProvider(event.includeServer(), new BetterCombatAttributesProvider(output));
-
-        // Le mod n'a pas de blocs : on donne au provider d'items une liste de tags de blocs vide
-        // au lieu de générer un BlockTagsProvider vide.
-        generator.addProvider(event.includeServer(),
-                new ModItemTagsProvider(output, event.getLookupProvider(),
-                        CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()),
-                        event.getExistingFileHelper()));
     }
 }

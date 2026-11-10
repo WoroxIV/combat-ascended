@@ -1,0 +1,26 @@
+{
+  "two_handed": true,
+  "reach_bonus": 0.5,
+  "ability": "dash",
+  "dash": {
+    "distance": 3.5,
+    "cooldown_seconds": 2.0,
+    "direction": "input"
+  },
+  "combo": {
+    "enabled": true,
+    "reset_after_seconds": 2.5,
+    "max_bonus_damage": 12,
+    "steps": [
+      {},
+      {},
+      {
+        "radius": 3.5,
+        "angle": 360,
+        "damage_multiplier": 1.35,
+        "cooldown_multiplier": 1.35,
+        "gesture": "slash"
+      }
+    ]
+  }
+}

@@ -6,7 +6,6 @@ import com.combatreforged.data.DashDirection;
 import com.combatreforged.data.WeaponAbility;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -70,14 +69,14 @@ public final class DashAbility {
         DashDefinition dash = settings.get();
 
         ItemStack offhand = player.getOffhandItem();
-        boolean offhandFree = WeaponItem.isTwoHanded(stack) || offhand.isEmpty() || DualWieldSystem.isMeleeWeapon(offhand);
+        boolean offhandFree = WeaponActions.isTwoHanded(stack) || (CombatCompat.betterCombat() && WeaponActions.isDeclaredTwoHanded(stack)) || offhand.isEmpty() || DualWieldSystem.isMeleeWeapon(offhand);
         if (!offhandFree) return false;
         if (player.isPassenger() || player.isFallFlying() || player.isInWater() || player.isInLava()) return false;
         if (!player.onGround() && !dash.allowAirborne()) return false;
         return dash.hungerCost() <= 0.0D || hasEnoughFood(player);
     }
 
-    /** Lance le dash (appelé des deux côtés par {@link WeaponItem#use}, après {@link #canDash}). */
+    /** Lance le dash (appelé des deux côtés par {@link AdoptedItemEvents}, après {@link #canDash}). */
     public static void dash(Level level, Player player, ItemStack stack, DashDefinition dash) {
         AbilityCooldowns.start(player, stack, cooldownSeconds(player, stack, dash));
         if (level.isClientSide) {

@@ -5,26 +5,14 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AttributeSupplierMixin",
-    "CrossbowAttackMixin",
-    "GearHoldingMixin",
-    "HardcodedGearMixin",
     "ItemStackFabricMixin",
     "LivingEntityFabricMixin",
-    "LootTableMixin",
-    "PiglinAiMixin",
-    "PiglinArmPoseMixin",
-    "PillagerArmPoseMixin",
     "PlayerFabricMixin",
-    "ProjectileFabricMixin",
-    "ProjectileUtilMixin",
-    "ServerLevelMixin"
+    "ProjectileFabricMixin"
   ],
   "client": [
-    "AbstractClientPlayerMixin",
     "ItemInHandRendererFabricMixin",
-    "ItemRendererFabricMixin",
-    "KeyMappingFabricMixin",
-    "PlayerRendererFabricMixin"
+    "KeyMappingFabricMixin"
   ],
   "injectors": {
     "defaultRequire": 1

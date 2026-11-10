@@ -27,6 +27,15 @@ versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
 
+# Epic Fight remplace tout le système de combat : les deux mods ne peuvent pas être chargés ensemble.
+[[dependencies.${mod_id}]]
+modId="epicfight"
+type="incompatible"
+reason="Combat Reforged and Epic Fight both replace the combat system. Remove one of them."
+versionRange="[0,)"
+ordering="NONE"
+side="BOTH"
+
 [[dependencies.${mod_id}]]
 modId="bettercombat"
 type="optional"

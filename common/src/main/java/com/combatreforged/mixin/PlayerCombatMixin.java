@@ -1,12 +1,5 @@
 package com.combatreforged.mixin;
 
-import java.util.UUID;
-import java.util.List;
-import java.util.ArrayList;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.CompoundTag;
 import com.combatreforged.combat.ComboSystem;
 import com.combatreforged.combat.DualWieldSystem;
 import com.combatreforged.combat.HandSwap;
@@ -15,7 +8,8 @@ import com.combatreforged.combat.ParrySystem;
 import com.combatreforged.combat.PlayerCombatState;
 import com.combatreforged.combat.WeaponProfiles;
 import com.combatreforged.data.WeaponData;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
+import com.combatreforged.compat.CombatCompat;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -44,7 +38,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Player.class)
 public abstract class PlayerCombatMixin implements ICombatPlayer {
 
-    @Unique private static final String BROKEN_SHURIKENS_KEY = "CombatReforgedBrokenShurikens";
     @Unique private final PlayerCombatState combatreforged$combat = new PlayerCombatState();
 
     /** Identifiant du bonus que le jeu donne aux joueurs en créatif. */
@@ -55,11 +48,11 @@ public abstract class PlayerCombatMixin implements ICombatPlayer {
         return combatreforged$combat;
     }
 
-    /** Le mode créatif ajoute 2 blocs de portée : une arme du mod porte exactement à la distance affichée. */
+    /** Le mode créatif ajoute 2 blocs de portée : une arme à portée exacte porte à la distance affichée. */
     @ModifyReturnValue(method = "entityInteractionRange", at = @At("RETURN"))
     private double combatreforged$exactWeaponReach(double reach) {
         Player player = (Player) (Object) this;
-        if (!WeaponItem.hasExactReach(player)) return reach;
+        if (!WeaponActions.hasExactReach(player)) return reach;
         AttributeInstance range = player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE);
         AttributeModifier creativeBonus = range == null ? null : range.getModifier(CREATIVE_REACH_BONUS);
         return creativeBonus == null ? reach : reach - creativeBonus.amount();
@@ -83,10 +76,19 @@ public abstract class PlayerCombatMixin implements ICombatPlayer {
             original.call(target);
             return;
         }
+        // Better Combat appelle attack() pour chaque cible d'une même frappe : une seule compte dans le combo.
+        if (CombatCompat.betterCombat()) {
+            long now = player.level().getGameTime();
+            if (state.swingTick == now) {
+                if (!state.swingVictims.contains(target.getId())) original.call(target);
+                return;
+            }
+            state.swingTick = now;
+            state.swingVictims.clear();
+        }
 
         ComboSystem.Hit hit = ComboSystem.beginHit(player, state);
         state.attackLanded = false;
-        state.lastAttackStrength = hit.strength();
         boolean special = hit.special();
         boolean dualWielding = DualWieldSystem.isDualWielding(player);
         boolean offhandAttack = dualWielding && state.offhandTurn && !special;
@@ -125,30 +127,14 @@ public abstract class PlayerCombatMixin implements ICombatPlayer {
         return landed;
     }
 
-    /** Rayon du coup balayé d'un objet adopté par un fichier d'arme ({@code WeaponItem} règle le sien lui-même). */
+    /** Rayon du coup balayé d'un objet qui a un profil d'arme. */
     @WrapOperation(method = "attack", require = 0, at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/item/ItemStack;getSweepHitBox(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/phys/AABB;"))
     private AABB combatreforged$adoptedSweepZone(ItemStack stack, Player player, Entity target, Operation<AABB> original) {
         if (WeaponData.rules().sweepActive() && WeaponProfiles.isAdopted(stack)) {
-            return WeaponItem.sweepZone(WeaponProfiles.definition(stack).orElseThrow(), target);
+            return WeaponActions.sweepZone(WeaponProfiles.definition(stack).orElseThrow(), target);
         }
         return original.call(stack, player, target);
-    }
-
-    /** Shurikens cassés en attente d'être ramassés : gardés avec les données du joueur. */
-    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    private void combatreforged$saveBrokenShurikens(CompoundTag tag, CallbackInfo ci) {
-        if (combatreforged$combat.brokenShurikens.isEmpty()) return;
-        ListTag list = new ListTag();
-        combatreforged$combat.brokenShurikens.forEach(batch -> list.add(NbtUtils.createUUID(batch)));
-        tag.put(BROKEN_SHURIKENS_KEY, list);
-    }
-
-    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    private void combatreforged$loadBrokenShurikens(CompoundTag tag, CallbackInfo ci) {
-        List<UUID> broken = new ArrayList<>();
-        tag.getList(BROKEN_SHURIKENS_KEY, Tag.TAG_INT_ARRAY).forEach(entry -> broken.add(NbtUtils.loadUUID(entry)));
-        combatreforged$combat.brokenShurikens = List.copyOf(broken);
     }
 
     /** Une parade parfaite au bouclier n'est jamais brisée par une hache. */

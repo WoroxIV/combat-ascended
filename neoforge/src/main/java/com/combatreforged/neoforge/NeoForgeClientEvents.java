@@ -3,7 +3,6 @@ package com.combatreforged.neoforge;
 import com.combatreforged.CombatReforged;
 import com.combatreforged.client.AttackZoneRenderer;
 import com.combatreforged.client.DualParryHandRenderer;
-import com.combatreforged.client.RangedWeaponClient;
 import com.combatreforged.client.tutorial.TutorialHintTracker;
 import com.combatreforged.combat.TwoHandedSystem;
 import com.combatreforged.data.WeaponData;
@@ -17,7 +16,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -41,11 +39,6 @@ final class NeoForgeClientEvents {
         if (DualParryHandRenderer.render(event.getHand(), event.getItemStack(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), event.getEquipProgress(), false)) {
             event.setCanceled(true);
         }
-    }
-
-    @SubscribeEvent
-    static void onComputeFov(ComputeFovModifierEvent event) {
-        event.setNewFovModifier(RangedWeaponClient.modifyFov(event.getPlayer(), event.getNewFovModifier()));
     }
 
     @SubscribeEvent

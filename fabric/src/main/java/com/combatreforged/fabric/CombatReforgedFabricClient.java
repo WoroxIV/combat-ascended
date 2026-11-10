@@ -4,10 +4,6 @@ import com.combatreforged.CombatReforged;
 import com.combatreforged.client.AttackZoneRenderer;
 import com.combatreforged.client.CombatHud;
 import com.combatreforged.client.ModKeyMappings;
-import com.combatreforged.client.RangedWeaponClient;
-import com.combatreforged.client.ShieldItemRenderer;
-import com.combatreforged.client.ShurikenRenderer;
-import com.combatreforged.client.WeaponPaletteSource;
 import com.combatreforged.client.editor.ClientEditorHooks;
 import com.combatreforged.client.editor.WeaponEditorScreen;
 import com.combatreforged.client.tutorial.TutorialHintTracker;
@@ -19,8 +15,6 @@ import com.combatreforged.network.DualSwingPayload;
 import com.combatreforged.network.EditorResultPayload;
 import com.combatreforged.network.OpenEditorPayload;
 import com.combatreforged.network.WeaponDataSyncPayload;
-import com.combatreforged.registry.ModEntities;
-import com.combatreforged.registry.ModItems;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -29,20 +23,19 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import com.combatreforged.client.tutorial.TutorialRendering;
+import com.combatreforged.tutorial.DemoWeapon;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.texture.atlas.SpriteSources;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -52,8 +45,6 @@ public final class CombatReforgedFabricClient implements ClientModInitializer {
     /** Largeur et écart des boutons du menu Échap du jeu. */
     private static final int PAUSE_BUTTON_WIDTH = 204;
     private static final int BUTTON_GAP = 4;
-
-    private ShieldItemRenderer shieldRenderer;
 
     @Override
     public void onInitializeClient() {
@@ -80,20 +71,9 @@ public final class CombatReforgedFabricClient implements ClientModInitializer {
     }
 
     private void registerRendering() {
-        SpriteSources.TYPES.put(WeaponPaletteSource.ID, WeaponPaletteSource.TYPE);
-        EntityRendererRegistry.register(ModEntities.SHURIKEN.get(), ShurikenRenderer::new);
-
-        ModItems.allShields().forEach(shield -> {
-            BuiltinItemRendererRegistry.INSTANCE.register(shield.get(), (stack, mode, pose, buffers, light, overlay) -> {
-                // Créé au premier affichage : le jeu n'est pas encore prêt au démarrage.
-                if (shieldRenderer == null) shieldRenderer = new ShieldItemRenderer();
-                shieldRenderer.renderByItem(stack, mode, pose, buffers, light, overlay);
-            });
-            // La pose "bouclier levé" est un modèle différent, choisi par cette propriété (comme pour le bouclier vanilla).
-            ItemProperties.register(shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
-                    (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
-        });
-        RangedWeaponClient.registerItemProperties();
+        // Les modèles des armes de démonstration des tutoriels, chargés sans objet associé.
+        ModelLoadingPlugin.register(context -> context.addModels(DemoWeapon.allModels()));
+        TutorialRendering.setModelLookup(id -> Minecraft.getInstance().getModelManager().getModel(id));
 
         HudRenderCallback.EVENT.register(CombatHud::render);
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> AttackZoneRenderer.render(context.matrixStack(), context.camera().getPosition(),

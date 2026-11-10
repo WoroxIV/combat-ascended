@@ -3,7 +3,6 @@ package com.combatreforged.combat;
 import com.combatreforged.compat.CombatCompat;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.registry.ModTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -37,7 +36,7 @@ public final class DualWieldSystem {
      * ou tag {@code combat_reforged:dual_wieldable} pour un objet d'un autre mod.
      */
     public static boolean canDualWield(ItemStack stack) {
-        if (WeaponItem.isTwoHanded(stack)) return false;
+        if (WeaponActions.isTwoHanded(stack)) return false;
         return WeaponProfiles.definition(stack).map(WeaponDefinition::dualWielded).orElse(false) || stack.is(ModTags.DUAL_WIELDABLE);
     }
 
@@ -47,6 +46,21 @@ public final class DualWieldSystem {
                 && !CombatCompat.isFakePlayer(player)
                 && canDualWield(player.getMainHandItem())
                 && canDualWield(player.getOffhandItem());
+    }
+
+    /**
+     * Vrai si les deux mains tiennent une arme ambidextre, et que le dual wield existe vraiment : le nôtre ou celui de
+     * Better Combat. Sert à la parade et aux coups à deux armes, qui ne dépendent pas de qui alterne les mains.
+     */
+    public static boolean holdsDualWeapons(LivingEntity player) {
+        if (CombatCompat.isFakePlayer(player)) return false;
+        if (CombatCompat.betterCombat()) return declaredDual(player.getMainHandItem()) && declaredDual(player.getOffhandItem());
+        return isDualWielding(player);
+    }
+
+    private static boolean declaredDual(ItemStack stack) {
+        return !WeaponActions.isDeclaredTwoHanded(stack)
+                && (WeaponProfiles.definition(stack).map(WeaponDefinition::dualWielded).orElse(false) || stack.is(ModTags.DUAL_WIELDABLE));
     }
 
     /**

@@ -1,12 +1,13 @@
 package com.combatreforged.combat;
 
 import com.combatreforged.data.ComboStep;
-import com.combatreforged.item.WeaponType;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.UUID;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * État de combat d'un joueur : dual wield, combo, animation à deux bras.
@@ -37,9 +38,9 @@ public final class PlayerCombatState {
     public int comboStep;
     /** Moment (temps du monde, en ticks) après lequel le combo repart du début. */
     public long comboExpiresAt;
-    /** Type d'arme du combo en cours : changer d'arme remet le combo à zéro. */
+    /** Profil de l'arme du combo en cours : changer d'arme remet le combo à zéro. */
     @Nullable
-    public WeaponType comboType;
+    public ResourceLocation comboType;
     /** La dernière attaque était un coup spécial : l'animation part de la main principale, et le tour y revient. */
     public boolean lastAttackSpecial;
     /** Recharge imposée au prochain coup (ticks) après un coup spécial, 0 = recharge normale. Vaut pour comboType. */
@@ -68,17 +69,12 @@ public final class PlayerCombatState {
     /** Moment où ce bonus se perd s'il n'a pas servi. */
     public long perfectBonusUntil;
 
-    // --- Enchantements ---
+    // --- Frappe de Better Combat (un appel à attack() par cible) ---
 
-    /** Force de la dernière attaque (1 = chargée à fond), pour le Saignement. */
-    public float lastAttackStrength;
-    /** Avant ce moment, Vampirisme ne soigne pas à nouveau. */
-    public long vampirismReadyAt;
-
-    // --- Shurikens ---
-
-    /** Shurikens dont le dernier point de durabilité a été lancé : les ramasser recrée l'objet. Sauvegardé avec le joueur. */
-    public List<UUID> brokenShurikens = List.of();
+    /** Moment de la dernière frappe comptée dans le combo : les autres cibles du même tick n'avancent pas le combo. */
+    public long swingTick = -1L;
+    /** Entités déjà touchées pendant cette frappe (zone du coup spécial) : Better Combat ne les frappe pas une 2e fois. */
+    public final Set<Integer> swingVictims = new HashSet<>();
 
     /** Remet le combo au début (arme changée, combo désactivé...). */
     public void resetCombo() {

@@ -1,8 +1,9 @@
 package com.combatreforged.network;
 
 import com.combatreforged.CombatReforged;
+import com.combatreforged.combat.ComboSystem;
 import com.combatreforged.combat.PlayerCombatState;
-import com.combatreforged.item.WeaponType;
+import com.combatreforged.compat.CombatCompat;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,18 +18,18 @@ import net.minecraft.world.entity.player.Player;
  *
  * @param step      coup du combo qui va être porté
  * @param ticksLeft temps avant que le combo reparte du début
- * @param typeIndex type d'arme du combo (-1 = aucun combo)
+ * @param profile   profil de l'arme du combo (vide = aucun combo)
  * @param handTurn  main qui frappe ensuite : 0 = principale, 1 = secondaire, -1 = ne pas y toucher (après un coup,
  *                  le client a pu frapper de nouveau entre-temps et a déjà la bonne main)
  */
-public record ComboSyncPayload(int step, int ticksLeft, int typeIndex, int handTurn) implements CustomPacketPayload {
+public record ComboSyncPayload(int step, int ticksLeft, String profile, int handTurn) implements CustomPacketPayload {
     public static final Type<ComboSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "combo_sync"));
     private static final int KEEP_HAND = -1;
 
     public static final StreamCodec<ByteBuf, ComboSyncPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, ComboSyncPayload::step,
             ByteBufCodecs.VAR_INT, ComboSyncPayload::ticksLeft,
-            ByteBufCodecs.VAR_INT, ComboSyncPayload::typeIndex,
+            ByteBufCodecs.STRING_UTF8, ComboSyncPayload::profile,
             ByteBufCodecs.VAR_INT, ComboSyncPayload::handTurn,
             ComboSyncPayload::new);
 
@@ -43,8 +44,8 @@ public record ComboSyncPayload(int step, int ticksLeft, int typeIndex, int handT
 
     private static ComboSyncPayload create(Player player, PlayerCombatState state, int handTurn) {
         long ticksLeft = Math.max(0L, state.comboExpiresAt - player.level().getGameTime());
-        int typeIndex = state.comboType == null ? -1 : state.comboType.ordinal();
-        return new ComboSyncPayload(state.comboStep, (int) Math.min(Integer.MAX_VALUE, ticksLeft), typeIndex, handTurn);
+        String profile = state.comboType == null ? "" : state.comboType.toString();
+        return new ComboSyncPayload(state.comboStep, (int) Math.min(Integer.MAX_VALUE, ticksLeft), profile, handTurn);
     }
 
     @Override
@@ -55,10 +56,12 @@ public record ComboSyncPayload(int step, int ticksLeft, int typeIndex, int handT
     /** Côté client : remplace l'état du combo du joueur par celui du serveur. */
     public static void handle(ComboSyncPayload payload, Player player) {
         PlayerCombatState state = PlayerCombatState.of(player);
-        WeaponType[] types = WeaponType.values();
-        state.comboType = payload.typeIndex() >= 0 && payload.typeIndex() < types.length ? types[payload.typeIndex()] : null;
+        int previousStep = state.comboStep;
+        state.comboType = payload.profile().isEmpty() ? null : ResourceLocation.parse(payload.profile());
         state.comboStep = payload.step();
         state.comboExpiresAt = player.level().getGameTime() + payload.ticksLeft();
         if (payload.handTurn() != KEEP_HAND) state.offhandTurn = payload.handTurn() == 1;
+        // Avec Better Combat, le client ne prédit rien : le signal "prochain coup spécial" vient d'ici.
+        if (CombatCompat.betterCombat() && payload.step() != previousStep) ComboSystem.onServerAdvance(player, state);
     }
 }

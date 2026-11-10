@@ -3,7 +3,7 @@ package com.combatreforged.client.tutorial;
 import com.combatreforged.client.ModKeyMappings;
 import com.combatreforged.config.ClientConfig;
 import com.combatreforged.data.WeaponData;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponProfiles;
 import com.combatreforged.tutorial.TutorialHints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 /**
- * Propose un tutoriel la première fois que le joueur obtient un type d'arme, quelle qu'en soit la façon (ramassage,
+ * Propose un tutoriel la première fois que le joueur obtient une arme d'un nouveau profil, quelle qu'en soit la façon (ramassage,
  * craft, coffre...). Une seule proposition par type d'arme et par tutoriel, et jamais deux à la suite.
  */
 public final class TutorialHintTracker {
@@ -38,16 +38,17 @@ public final class TutorialHintTracker {
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (stack.getItem() instanceof WeaponItem weapon && suggestFor(minecraft, weapon, stack)) return;
+            Optional<WeaponProfiles.Profile> profile = WeaponProfiles.of(stack);
+            if (profile.isPresent() && suggestFor(minecraft, profile.get(), stack)) return;
         }
     }
 
     /** @return vrai si une proposition vient d'être affichée */
-    private static boolean suggestFor(Minecraft minecraft, WeaponItem weapon, ItemStack stack) {
-        String type = weapon.getType().id();
+    private static boolean suggestFor(Minecraft minecraft, WeaponProfiles.Profile profile, ItemStack stack) {
+        String type = profile.id().toString();
         if (ClientConfig.isHintShown(type)) return false;
         ClientConfig.markHintShown(type);
-        Optional<String> scene = TutorialHints.suggestion(weapon.definition(), WeaponData.rules(),
+        Optional<String> scene = TutorialHints.suggestion(profile.definition(), WeaponData.rules(),
                 id -> ClientConfig.isTutorialSeen(id) || ClientConfig.isHintShown(id));
         if (scene.isEmpty()) return false;
         ClientConfig.markHintShown(scene.get());

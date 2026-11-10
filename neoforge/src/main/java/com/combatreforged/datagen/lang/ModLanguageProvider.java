@@ -1,10 +1,6 @@
 package com.combatreforged.datagen.lang;
 
 import com.combatreforged.CombatReforged;
-import com.combatreforged.item.GearType;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponMaterials;
-import com.combatreforged.item.WeaponType;
 import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -15,13 +11,10 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -29,7 +22,7 @@ import java.util.stream.Stream;
  * {@code src/main/lang/<langue>.json} (voir {@link LanguageSource}). Lancé par {@code gradlew runData}.
  * <p>
  * Sert aussi de test : la génération échoue, avec la liste des problèmes, si une langue oublie un texte de
- * l'anglais, contient une clé inconnue, ou n'a pas de nom pour un type d'arme ou un matériau.
+ * l'anglais ou contient une clé inconnue.
  */
 public final class ModLanguageProvider implements DataProvider {
     /** Langue de référence : toutes les autres doivent avoir exactement les mêmes textes. */
@@ -63,11 +56,9 @@ public final class ModLanguageProvider implements DataProvider {
         Map<String, JsonObject> files = new TreeMap<>();
         for (LanguageSource source : sources.values()) {
             checkStrings(source, reference, problems);
-            boolean namesComplete = checkNames(source, problems);
 
             JsonObject json = new JsonObject();
             source.strings().forEach(json::addProperty);
-            if (namesComplete) addWeaponNames(source, json, problems);
             files.put(source.locale(), json);
         }
 
@@ -114,42 +105,4 @@ public final class ModLanguageProvider implements DataProvider {
         }
     }
 
-    /** Un nom pour chaque type et chaque matériau, et aucun id inconnu. */
-    private static boolean checkNames(LanguageSource source, List<String> problems) {
-        int before = problems.size();
-        Set<String> typeIds = Stream.concat(Arrays.stream(WeaponType.values()).map(WeaponType::id), Arrays.stream(GearType.values()).map(GearType::id))
-                .collect(Collectors.toSet());
-        Set<String> materialIds = WeaponMaterials.all().stream().map(WeaponMaterial::id).collect(Collectors.toSet());
-
-        typeIds.stream().filter(id -> !source.types().containsKey(id)).sorted()
-                .forEach(id -> problems.add(source.locale() + ": missing weapon type name \"" + id + "\""));
-        source.types().keySet().stream().filter(id -> !typeIds.contains(id))
-                .forEach(id -> problems.add(source.locale() + ": unknown weapon type \"" + id + "\""));
-        materialIds.stream().filter(id -> !source.materials().containsKey(id)).sorted()
-                .forEach(id -> problems.add(source.locale() + ": missing material name \"" + id + "\""));
-        source.materials().keySet().stream().filter(id -> !materialIds.contains(id))
-                .forEach(id -> problems.add(source.locale() + ": unknown material \"" + id + "\""));
-        return problems.size() == before;
-    }
-
-    private static void addWeaponNames(LanguageSource source, JsonObject json, List<String> problems) {
-        for (WeaponType type : WeaponType.values()) {
-            for (WeaponMaterial material : WeaponMaterials.all()) {
-                try {
-                    json.addProperty("item." + CombatReforged.MODID + "." + material.itemName(type), source.itemName(type.id(), material.id()));
-                } catch (IllegalArgumentException e) {
-                    problems.add(source.locale() + ": " + e.getMessage());
-                }
-            }
-        }
-        for (GearType type : GearType.values()) {
-            for (WeaponMaterial material : WeaponMaterials.all()) {
-                try {
-                    json.addProperty("item." + CombatReforged.MODID + "." + material.itemName(type), source.itemName(type.id(), material.id()));
-                } catch (IllegalArgumentException e) {
-                    problems.add(source.locale() + ": " + e.getMessage());
-                }
-            }
-        }
-    }
 }

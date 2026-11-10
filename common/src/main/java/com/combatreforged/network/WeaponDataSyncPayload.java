@@ -1,6 +1,7 @@
 package com.combatreforged.network;
 
 import com.combatreforged.CombatReforged;
+import com.combatreforged.combat.WeaponProfiles;
 import com.combatreforged.data.WeaponData;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
@@ -26,6 +27,11 @@ public record WeaponDataSyncPayload(WeaponData.Snapshot snapshot) implements Cus
 
     public static final StreamCodec<ByteBuf, WeaponDataSyncPayload> STREAM_CODEC =
             ByteBufCodecs.stringUtf8(MAX_LENGTH).map(WeaponDataSyncPayload::fromJson, WeaponDataSyncPayload::toJson);
+
+    /** Les données en vigueur, avec le profil de chaque objet : le client n'a plus rien à calculer. */
+    public static WeaponDataSyncPayload current() {
+        return new WeaponDataSyncPayload(WeaponData.current().withItems(WeaponProfiles.table()));
+    }
 
     @Override
     public Type<WeaponDataSyncPayload> type() {

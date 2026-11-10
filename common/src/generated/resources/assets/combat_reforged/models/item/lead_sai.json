@@ -1,6 +1,0 @@
-{
-  "parent": "combat_reforged:item/sai_base",
-  "textures": {
-    "layer0": "combat_reforged:item/lead_sai"
-  }
-}

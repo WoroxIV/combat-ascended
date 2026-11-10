@@ -3,24 +3,18 @@ package com.combatreforged.neoforge;
 import com.combatreforged.CombatReforged;
 import com.combatreforged.combat.AdoptedItemEvents;
 import com.combatreforged.combat.CombatEvents;
-import com.combatreforged.combat.EnchantmentEvents;
 import com.combatreforged.combat.ParrySystem;
 import com.combatreforged.combat.ShieldSystem;
 import com.combatreforged.combat.TwoHandedSystem;
 import com.combatreforged.command.CombatReforgedCommand;
-import com.combatreforged.config.LegacyConfigMigration;
 import com.combatreforged.data.WeaponDataEvents;
 import com.combatreforged.data.WeaponDataLoader;
-import com.combatreforged.editor.EditorService;
-import com.combatreforged.event.VanillaGearEvents;
 import com.combatreforged.platform.IncomingDamage;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -29,7 +23,6 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
@@ -38,9 +31,7 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.SweepAttackEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 
 /** Relie les événements du jeu de NeoForge au code commun. */
 @EventBusSubscriber(modid = CombatReforged.MODID)
@@ -65,11 +56,6 @@ final class NeoForgeGameEvents {
     @SubscribeEvent
     static void onDamageBeforeHealth(LivingDamageEvent.Pre event) {
         event.setNewDamage(CombatEvents.capPvpHit(event.getEntity(), event.getSource(), event.getNewDamage()));
-    }
-
-    @SubscribeEvent
-    static void onDamageDealt(LivingDamageEvent.Post event) {
-        EnchantmentEvents.onDamageDealt(event.getEntity(), event.getSource(), event.getNewDamage());
     }
 
     @SubscribeEvent
@@ -143,19 +129,12 @@ final class NeoForgeGameEvents {
 
     // --- Monde ---
 
+    /** Les mobs reçoivent leurs comportements de garde à chaque arrivée dans le monde. */
     @SubscribeEvent
-    static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        VanillaGearEvents.onLogin(event.getEntity());
-    }
-
-    @SubscribeEvent
-    static void onVillagerTrades(VillagerTradesEvent event) {
-        VanillaGearEvents.onVillagerTrades(event.getType(), event.getTrades());
-    }
-
-    @SubscribeEvent
-    static void onEntityJoin(EntityJoinLevelEvent event) {
-        VanillaGearEvents.onEntityJoin(event.getEntity(), event.loadedFromDisk());
+    static void onEntityJoin(net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event) {
+        if (!event.getLevel().isClientSide && event.getEntity() instanceof net.minecraft.world.entity.Mob mob && com.combatreforged.data.WeaponData.rules().mobBehaviorsActive()) {
+            com.combatreforged.combat.MobCombat.addGoals(mob);
+        }
     }
 
     // --- Données et commandes ---
@@ -168,13 +147,6 @@ final class NeoForgeGameEvents {
     @SubscribeEvent
     static void onDatapackSync(OnDatapackSyncEvent event) {
         WeaponDataEvents.onDatapackSync(event.getPlayer() == null, event.getRelevantPlayers());
-    }
-
-    /** Reprend les réglages 1.x propres à ce monde. Après le démarrage : les datapacks sont déjà chargés avant ServerAboutToStart. */
-    @SubscribeEvent
-    static void onServerStarted(ServerStartedEvent event) {
-        MinecraftServer server = event.getServer();
-        if (LegacyConfigMigration.migrateWorld(server.getWorldPath(LevelResource.ROOT))) EditorService.enableEditorPack(server);
     }
 
     @SubscribeEvent

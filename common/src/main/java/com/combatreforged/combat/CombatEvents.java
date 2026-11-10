@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * Règles de combat ajoutées par les stats des armes : pénétration d'armure, coup balayé,
- * temps d'invulnérabilité en dual wield. (Les effets à l'impact sont dans {@code WeaponItem.hurtEnemy},
+ * temps d'invulnérabilité en dual wield. (Les effets à l'impact sont dans {@link WeaponActions},
  * les combos dans {@link ComboSystem}.)
  */
 public final class CombatEvents {
@@ -39,7 +39,6 @@ public final class CombatEvents {
         if (event.isCanceled()) return;
         MobCombat.onMobHit(event);
         applyWeaponRules(event);
-        EnchantmentEvents.onIncomingDamage(event);
     }
 
     private static void applyWeaponRules(IncomingDamage event) {

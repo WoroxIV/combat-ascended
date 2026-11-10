@@ -1,14 +1,15 @@
 package com.combatreforged.data;
 
-import com.combatreforged.item.WeaponType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Données des armes actuellement en vigueur (stats de chaque type + règles globales).
+ * Données de combat actuellement en vigueur (archétypes, fichiers d'armes, règles).
  * <p>
  * Côté serveur, elles viennent du chargement des fichiers ({@link WeaponDataLoader}) ; côté client, de la
  * synchronisation envoyée par le serveur. En solo, client et serveur partagent la même instance, ce qui est
@@ -25,26 +26,87 @@ public final class WeaponData {
     private WeaponData() {
     }
 
-    /** Un jeu de données complet, immuable : on le remplace en bloc, jamais champ par champ. */
-    public record Snapshot(Map<WeaponType, WeaponDefinition> weapons, RulesDefinition rules, GearDefinition gear) {
+    /** D'où vient le profil d'un objet, du plus explicite au plus deviné. */
+    public enum Source implements net.minecraft.util.StringRepresentable {
+        FILE("file"), TAG("tag"), BETTER_COMBAT("better_combat"), EPIC_FIGHT("epic_fight"), NAME("name"), FALLBACK("fallback");
+
+        public static final Codec<Source> CODEC = net.minecraft.util.StringRepresentable.fromEnum(Source::values);
+
+        private final String id;
+
+        Source(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return id;
+        }
+
+        /** Vrai si le profil a été deviné : aucun fichier ne l'a demandé pour cet objet. */
+        public boolean detected() {
+            return this == BETTER_COMBAT || this == EPIC_FIGHT || this == NAME || this == FALLBACK;
+        }
+    }
+
+    /**
+     * Le profil attribué à un objet, calculé par le serveur.
+     *
+     * @param keepsOwnRightClick l'objet a son propre clic droit : il garde le sien
+     */
+    public record ItemProfile(ResourceLocation profile, Source source, boolean keepsOwnRightClick) {
+        public static final Codec<ItemProfile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ResourceLocation.CODEC.fieldOf("profile").forGetter(ItemProfile::profile),
+                Source.CODEC.fieldOf("source").forGetter(ItemProfile::source),
+                Codec.BOOL.optionalFieldOf("keeps_own_right_click", false).forGetter(ItemProfile::keepsOwnRightClick)
+        ).apply(instance, ItemProfile::new));
+    }
+
+    /**
+     * Un jeu de données complet, immuable : on le remplace en bloc, jamais champ par champ.
+     *
+     * @param archetypes comportements de référence, par identifiant
+     * @param weapons    fichiers d'armes, par identifiant
+     * @param items      profil de chaque objet : vide côté serveur jusqu'au premier calcul, reçu tout prêt par le client
+     */
+    public record Snapshot(Map<ResourceLocation, WeaponDefinition> archetypes, Map<ResourceLocation, WeaponDefinition> weapons,
+                           DetectionRules detection, RulesDefinition rules, GearDefinition gear, Map<ResourceLocation, ItemProfile> items) {
         public static final Codec<Snapshot> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.unboundedMap(WeaponType.CODEC, WeaponDefinition.CODEC).fieldOf("weapons").forGetter(Snapshot::weapons),
+                Codec.unboundedMap(ResourceLocation.CODEC, WeaponDefinition.CODEC).fieldOf("archetypes").forGetter(Snapshot::archetypes),
+                Codec.unboundedMap(ResourceLocation.CODEC, WeaponDefinition.CODEC).fieldOf("weapons").forGetter(Snapshot::weapons),
+                DetectionRules.CODEC.fieldOf("detection").forGetter(Snapshot::detection),
                 RulesDefinition.CODEC.fieldOf("rules").forGetter(Snapshot::rules),
-                GearDefinition.CODEC.fieldOf("gear").forGetter(Snapshot::gear)
+                GearDefinition.CODEC.fieldOf("gear").forGetter(Snapshot::gear),
+                Codec.unboundedMap(ResourceLocation.CODEC, ItemProfile.CODEC).fieldOf("items").forGetter(Snapshot::items)
         ).apply(instance, Snapshot::new));
 
         public Snapshot {
+            archetypes = Map.copyOf(archetypes);
             weapons = Map.copyOf(weapons);
+            items = Map.copyOf(items);
         }
 
-        public WeaponDefinition weapon(WeaponType type) {
-            return weapons.getOrDefault(type, WeaponDefinition.FALLBACK);
+        /** Le comportement de cet identifiant : un fichier d'arme, sinon un archétype. */
+        public WeaponDefinition definition(ResourceLocation id) {
+            WeaponDefinition weapon = weapons.get(id);
+            return weapon != null ? weapon : archetypes.getOrDefault(id, WeaponDefinition.FALLBACK);
+        }
+
+        @Nullable
+        public WeaponDefinition definitionOrNull(ResourceLocation id) {
+            WeaponDefinition weapon = weapons.get(id);
+            return weapon != null ? weapon : archetypes.get(id);
+        }
+
+        /** Mêmes données, avec le profil de chaque objet (avant de les envoyer aux clients). */
+        public Snapshot withItems(Map<ResourceLocation, ItemProfile> resolved) {
+            return new Snapshot(archetypes, weapons, detection, rules, gear, resolved);
         }
     }
 
     /**
      * Données + numéro de version, qui augmente à chaque remplacement.
-     * Les caches (ex : modificateurs d'attributs des armes) comparent ce numéro pour savoir s'ils sont à jour.
+     * Les caches comparent ce numéro pour savoir s'ils sont à jour.
      */
     public record Versioned(Snapshot snapshot, int generation) {
     }
@@ -64,8 +126,8 @@ public final class WeaponData {
         return value;
     }
 
-    public static WeaponDefinition weapon(WeaponType type) {
-        return current().weapon(type);
+    public static WeaponDefinition definition(ResourceLocation id) {
+        return current().definition(id);
     }
 
     public static RulesDefinition rules() {

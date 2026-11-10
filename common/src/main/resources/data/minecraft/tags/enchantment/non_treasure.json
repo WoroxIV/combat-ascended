@@ -1,8 +1,6 @@
 {
   "values": [
     "combat_reforged:riposte",
-    "combat_reforged:momentum",
-    "combat_reforged:execution",
-    "combat_reforged:bleeding"
+    "combat_reforged:momentum"
   ]
 }

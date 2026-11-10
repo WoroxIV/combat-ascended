@@ -1,6 +1,0 @@
-{
-  "parent": "combat_reforged:item/chakram_base",
-  "textures": {
-    "layer0": "combat_reforged:item/terrasteel_chakram"
-  }
-}

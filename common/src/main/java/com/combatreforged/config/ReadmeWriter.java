@@ -6,7 +6,6 @@ import com.combatreforged.data.FieldSet;
 import com.combatreforged.data.GearDefinition;
 import com.combatreforged.data.RulesDefinition;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponType;
 
 /**
  * Écrit le README.txt du dossier de config, dans la langue du jeu.
@@ -28,14 +27,6 @@ final class ReadmeWriter {
         for (String section : new String[]{"intro", "folders", "example", "priority", "errors"}) {
             out.append(docs.text(KEY + section)).append("\n\n");
         }
-
-        out.append(docs.text(KEY + "weapon_files")).append('\n');
-        for (WeaponType type : WeaponType.values()) {
-            String file = type.id() + ".json";
-            out.append(INDENT).append(file).append(" ".repeat(Math.max(1, 18 - file.length())))
-                    .append(docs.text(CombatReforged.MODID + ".configuration." + type.id())).append('\n');
-        }
-        out.append('\n');
 
         appendFields(out, docs, WeaponDefinition.FIELDS, KEY + "weapon_fields");
         appendFields(out, docs, RulesDefinition.FIELDS, KEY + "rules_fields");

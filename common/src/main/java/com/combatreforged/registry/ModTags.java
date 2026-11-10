@@ -4,14 +4,12 @@ import com.combatreforged.CombatReforged;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 
 /** Tags du mod, modifiables par datapack comme n'importe quel tag. */
 public final class ModTags {
-    /**
-     * Objets d'autres mods utilisables en dual wield sans être déclarés dans une arme. Vide par défaut :
-     * pour les armes du mod, c'est l'option "dual_wielded" de leur fichier qui compte.
-     */
+    /** Objets utilisables en dual wield sans être déclarés dans un fichier d'arme. Vide par défaut. */
     public static final TagKey<Item> DUAL_WIELDABLE = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "dual_wieldable"));
 
     /**
@@ -20,25 +18,15 @@ public final class ModTags {
      */
     public static final TagKey<Item> MELEE_WEAPONS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "melee_weapons"));
 
-    /** Tous les boucliers du mod. */
-    public static final TagKey<Item> SHIELDS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "shields"));
-
-    /** Arcs du mod et arc vanilla (recette du distributeur). */
-    public static final TagKey<Item> BOWS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "bows"));
-    /** Arbalètes du mod et arbalète vanilla (succès Ol' Betsy). */
-    public static final TagKey<Item> CROSSBOWS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "crossbows"));
-
-    /** Tous les shurikens : reçoivent les enchantements des arcs et des arbalètes. */
-    public static final TagKey<Item> SHURIKENS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "shurikens"));
-
-    /** Armes qui parent : elles peuvent recevoir Riposte. */
+    /** Armes qui peuvent recevoir Riposte, en plus de celles dont le profil pare. */
     public static final TagKey<Item> ENCHANTABLE_PARRY_WEAPONS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "enchantable/parry_weapons"));
-    /** Tout ce qui peut parer ou bloquer (armes qui parent et boucliers) : peut recevoir Reflective. */
+    /** Ce qui peut recevoir Reflective, en plus des boucliers et des armes dont le profil pare. */
     public static final TagKey<Item> ENCHANTABLE_PARRYING = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "enchantable/parrying"));
-    /** Armes qui peuvent recevoir Élan. */
+    /** Armes qui peuvent recevoir Élan, en plus de celles dont le profil dash. */
     public static final TagKey<Item> ENCHANTABLE_DASHING = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "enchantable/dashing"));
-    /** Faucilles, faux et katanas : les armes qui peuvent recevoir Saignement. */
-    public static final TagKey<Item> ENCHANTABLE_BLEEDING = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "enchantable/bleeding"));
+
+    /** Projectiles récupérables par leur lanceur (shurikens...) : les renvoyer les lui ferait perdre. */
+    public static final TagKey<EntityType<?>> NOT_REFLECTED_WHEN_PICKABLE = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(CombatReforged.MODID, "not_reflected_when_pickable"));
 
     private ModTags() {
     }

@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "twilightforest"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "combat_reforged:weapon_materials/ironwood"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "combat_reforged:weapon_materials/ironwood"
+    }
+  },
+  "pattern": [
+    " M ",
+    "M M",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "combat_reforged:ironwood_chakram"
+  }
+}

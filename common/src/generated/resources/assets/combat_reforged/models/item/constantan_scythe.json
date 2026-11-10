@@ -1,0 +1,6 @@
+{
+  "parent": "combat_reforged:item/scythe_base",
+  "textures": {
+    "layer0": "combat_reforged:item/constantan_scythe"
+  }
+}

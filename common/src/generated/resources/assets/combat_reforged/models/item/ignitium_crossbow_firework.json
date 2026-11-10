@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/crossbow",
+  "textures": {
+    "layer0": "combat_reforged:item/ignitium_crossbow_firework"
+  }
+}

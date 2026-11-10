@@ -1,0 +1,6 @@
+{
+  "parent": "combat_reforged:item/claymore_base",
+  "textures": {
+    "layer0": "combat_reforged:item/manasteel_claymore"
+  }
+}

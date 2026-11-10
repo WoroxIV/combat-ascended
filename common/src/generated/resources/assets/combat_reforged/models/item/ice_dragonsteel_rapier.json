@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "combat_reforged:item/ice_dragonsteel_rapier"
+  }
+}

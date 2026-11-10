@@ -1,0 +1,187 @@
+{
+  "values": [
+    "minecraft:crossbow",
+    "combat_reforged:wooden_crossbow",
+    "combat_reforged:stone_crossbow",
+    "combat_reforged:iron_crossbow",
+    "combat_reforged:golden_crossbow",
+    "combat_reforged:diamond_crossbow",
+    "combat_reforged:netherite_crossbow",
+    {
+      "id": "combat_reforged:steel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_crossbow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_crossbow",
+      "required": false
+    }
+  ]
+}

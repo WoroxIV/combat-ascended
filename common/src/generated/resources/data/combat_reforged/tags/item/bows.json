@@ -1,0 +1,187 @@
+{
+  "values": [
+    "minecraft:bow",
+    "combat_reforged:wooden_bow",
+    "combat_reforged:stone_bow",
+    "combat_reforged:iron_bow",
+    "combat_reforged:golden_bow",
+    "combat_reforged:diamond_bow",
+    "combat_reforged:netherite_bow",
+    {
+      "id": "combat_reforged:steel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_bow",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_bow",
+      "required": false
+    }
+  ]
+}

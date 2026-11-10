@@ -1,0 +1,10 @@
+{
+  "values": {
+    "combat_reforged:wooden_bow": {
+      "burn_time": 300
+    },
+    "combat_reforged:wooden_crossbow": {
+      "burn_time": 300
+    }
+  }
+}

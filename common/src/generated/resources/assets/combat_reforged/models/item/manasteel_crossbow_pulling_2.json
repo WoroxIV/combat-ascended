@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/crossbow",
+  "textures": {
+    "layer0": "combat_reforged:item/manasteel_crossbow_pulling_2"
+  }
+}

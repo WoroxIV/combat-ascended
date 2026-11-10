@@ -1,0 +1,31 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "combat_reforged:weapon_materials/andesite_alloy"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "combat_reforged:weapon_materials/andesite_alloy"
+    }
+  },
+  "pattern": [
+    " M ",
+    "M M",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "combat_reforged:andesite_alloy_chakram"
+  }
+}

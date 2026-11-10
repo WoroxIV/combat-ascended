@@ -1,0 +1,23 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "translate": "enchantment.combat_reforged.riposte"
+  },
+  "max_cost": {
+    "base": 62,
+    "per_level_above_first": 11
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 12,
+    "per_level_above_first": 11
+  },
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#combat_reforged:enchantable/parry_weapons",
+  "weight": 2,
+  "exclusive_set": [
+    "combat_reforged:reflective"
+  ]
+}

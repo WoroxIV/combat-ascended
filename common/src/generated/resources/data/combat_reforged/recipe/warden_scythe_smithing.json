@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "deeperdarker"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "combat_reforged:weapon_materials/warden_template"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "combat_reforged:weapon_materials/warden_addition"
+      }
+    }
+  ],
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "tag": "combat_reforged:weapon_materials/warden_addition"
+  },
+  "base": {
+    "item": "combat_reforged:netherite_scythe"
+  },
+  "result": {
+    "count": 1,
+    "id": "combat_reforged:warden_scythe"
+  },
+  "template": {
+    "tag": "combat_reforged:weapon_materials/warden_template"
+  }
+}

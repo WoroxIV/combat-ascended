@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "tag": "c:ingots/netherite"
+  },
+  "base": {
+    "item": "combat_reforged:diamond_sai"
+  },
+  "result": {
+    "count": 1,
+    "id": "combat_reforged:netherite_sai"
+  },
+  "template": {
+    "tag": "combat_reforged:weapon_materials/netherite_template"
+  }
+}

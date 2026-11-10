@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": ["${mod_authors}"],
+  "contact": {
+    "homepage": "${mod_display_url}",
+    "issues": "${mod_issue_tracker_url}",
+    "sources": "https://github.com/WoroxIV/combat-reforged"
+  },
+  "license": "${mod_license}",
+  "icon": "assets/combat_reforged/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": ["com.combatreforged.gametest.CombatGameTests"],
+    "main": ["com.combatreforged.fabric.CombatReforgedFabric"],
+    "client": ["com.combatreforged.fabric.CombatReforgedFabricClient"],
+    "modmenu": ["com.combatreforged.fabric.ModMenuIntegration"],
+    "jei_mod_plugin": ["com.combatreforged.compat.jei.CombatReforgedJeiPlugin"],
+    "emi": ["com.combatreforged.compat.emi.CombatReforgedEmiPlugin"]
+  },
+  "mixins": [
+    "combatreforged.mixins.json",
+    "combatreforged.fabric.mixins.json"
+  ],
+  "accessWidener": "combat_reforged.accesswidener",
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "jei": "*",
+    "emi": "*"
+  }
+}

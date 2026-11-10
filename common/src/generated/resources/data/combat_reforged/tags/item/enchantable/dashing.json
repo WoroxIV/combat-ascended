@@ -1,0 +1,404 @@
+{
+  "values": [
+    {
+      "id": "combat_reforged:wooden_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:stone_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:iron_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:golden_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:diamond_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:netherite_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_dagger",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:wooden_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:stone_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:iron_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:golden_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:diamond_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:netherite_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_rapier",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_rapier",
+      "required": false
+    }
+  ]
+}

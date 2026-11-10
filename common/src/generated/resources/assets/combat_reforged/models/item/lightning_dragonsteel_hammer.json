@@ -1,0 +1,6 @@
+{
+  "parent": "combat_reforged:item/hammer_base",
+  "textures": {
+    "layer0": "combat_reforged:item/lightning_dragonsteel_hammer"
+  }
+}

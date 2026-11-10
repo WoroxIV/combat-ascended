@@ -1,209 +1,10 @@
 {
   "_info": "Source de traduction de Combat Reforged. Les noms d'armes sont construits avec 'pattern' : {type} et {material} sont remplacés par les noms ci-dessous ({type|lower} = première lettre en minuscule). Un matériau peut avoir une forme par genre (clé = 'gender' du type) et son propre 'pattern'. 'overrides' force le nom d'un objet précis. Après modification : gradlew runData.",
+  "attribute.name.player.sweeping_damage_ratio": "Коэффициент разящего удара",
   "names": {
-    "pattern": "{type} {material}",
-    "types": {
-      "broadsword": {
-        "name": "Палаш",
-        "gender": "m"
-      },
-      "spear": {
-        "name": "Копьё",
-        "gender": "n"
-      },
-      "dagger": {
-        "name": "Кинжал",
-        "gender": "m"
-      },
-      "scythe": {
-        "name": "Коса",
-        "gender": "f"
-      },
-      "rapier": {
-        "name": "Рапира",
-        "gender": "f"
-      },
-      "sickle": {
-        "name": "Серп",
-        "gender": "m"
-      },
-      "katana": {
-        "name": "Катана",
-        "gender": "f"
-      },
-      "battleaxe": {
-        "name": "Боевой топор",
-        "gender": "m"
-      },
-      "glaive": {
-        "name": "Глефа",
-        "gender": "f"
-      },
-      "hammer": {
-        "name": "Молот",
-        "gender": "m"
-      },
-      "claymore": {
-        "name": "Клеймор",
-        "gender": "m"
-      },
-      "chakram": {
-        "name": "Чакрам",
-        "gender": "m"
-      },
-      "sai": {
-        "name": "Сай",
-        "gender": "m"
-      },
-      "shield": {
-        "name": "Щит",
-        "gender": "m"
-      },
-      "bow": {
-        "name": "Лук",
-        "gender": "m"
-      },
-      "crossbow": {
-        "name": "Арбалет",
-        "gender": "m"
-      },
-      "shuriken": {
-        "name": "Сюрикен",
-        "gender": "m"
-      }
-    },
-    "materials": {
-      "wooden": {
-        "pattern": "{material} {type|lower}",
-        "m": "Деревянный",
-        "f": "Деревянная",
-        "n": "Деревянное"
-      },
-      "stone": {
-        "pattern": "{material} {type|lower}",
-        "m": "Каменный",
-        "f": "Каменная",
-        "n": "Каменное"
-      },
-      "iron": {
-        "pattern": "{material} {type|lower}",
-        "m": "Железный",
-        "f": "Железная",
-        "n": "Железное"
-      },
-      "golden": {
-        "pattern": "{material} {type|lower}",
-        "m": "Золотой",
-        "f": "Золотая",
-        "n": "Золотое"
-      },
-      "diamond": {
-        "pattern": "{material} {type|lower}",
-        "m": "Алмазный",
-        "f": "Алмазная",
-        "n": "Алмазное"
-      },
-      "netherite": {
-        "pattern": "{material} {type|lower}",
-        "m": "Незеритовый",
-        "f": "Незеритовая",
-        "n": "Незеритовое"
-      },
-      "steel": {
-        "pattern": "{material} {type|lower}",
-        "m": "Стальной",
-        "f": "Стальная",
-        "n": "Стальное"
-      },
-      "bronze": {
-        "pattern": "{material} {type|lower}",
-        "m": "Бронзовый",
-        "f": "Бронзовая",
-        "n": "Бронзовое"
-      },
-      "silver": {
-        "pattern": "{material} {type|lower}",
-        "m": "Серебряный",
-        "f": "Серебряная",
-        "n": "Серебряное"
-      },
-      "lead": {
-        "pattern": "{material} {type|lower}",
-        "m": "Свинцовый",
-        "f": "Свинцовая",
-        "n": "Свинцовое"
-      },
-      "nickel": {
-        "pattern": "{material} {type|lower}",
-        "m": "Никелевый",
-        "f": "Никелевая",
-        "n": "Никелевое"
-      },
-      "aluminum": {
-        "pattern": "{material} {type|lower}",
-        "m": "Алюминиевый",
-        "f": "Алюминиевая",
-        "n": "Алюминиевое"
-      },
-      "electrum": "из электрума",
-      "constantan": "из константана",
-      "osmium": {
-        "pattern": "{material} {type|lower}",
-        "m": "Осмиевый",
-        "f": "Осмиевая",
-        "n": "Осмиевое"
-      },
-      "refined_obsidian": "из очищенного обсидиана",
-      "refined_glowstone": "из очищенного светокамня",
-      "invar": "из инвара",
-      "signalum": "из сигналума",
-      "lumium": "из люмиума",
-      "enderium": "из эндериума",
-      "brass": {
-        "pattern": "{material} {type|lower}",
-        "m": "Латунный",
-        "f": "Латунная",
-        "n": "Латунное"
-      },
-      "andesite_alloy": "из андезитового сплава",
-      "manasteel": "из манастали",
-      "elementium": "из элементия",
-      "terrasteel": "из терростали",
-      "ironwood": "из железного дерева",
-      "steeleaf": "из стального листа",
-      "knightmetal": "из рыцарского металла",
-      "fiery": {
-        "pattern": "{material} {type|lower}",
-        "m": "Огненный",
-        "f": "Огненная",
-        "n": "Огненное"
-      },
-      "certus_quartz": "из истинного кварца",
-      "fluix": "из флюикса",
-      "zanite": "из занита",
-      "gravitite": "из гравитита",
-      "warden": "хранителя",
-      "dragonbone": "из драконьей кости",
-      "fire_dragonsteel": "из огненной драконьей стали",
-      "ice_dragonsteel": "из ледяной драконьей стали",
-      "lightning_dragonsteel": "из грозовой драконьей стали",
-      "cobalt": {
-        "pattern": "{material} {type|lower}",
-        "m": "Кобальтовый",
-        "f": "Кобальтовая",
-        "n": "Кобальтовое"
-      },
-      "manyullyn": "из маньюллина",
-      "allthemodium": "из аллтемодиума",
-      "vibranium": "из вибраниума",
-      "unobtainium": "из анобтаниума",
-      "ignitium": "из игнития",
-      "cursium": "из курсиума",
-      "cloggrum": "из клоггрума",
-      "froststeel": "из морозной стали",
-      "utherium": "из утерия",
-      "forgotten": "из забытого металла"
-    },
+    "pattern": "{material} {type}",
+    "types": {},
+    "materials": {},
     "overrides": {}
   },
   "strings": {
@@ -230,20 +31,11 @@
     "combat_reforged.data.problem.invalid": "%1$s › %2$s: %3$s (значение пропущено)",
     "combat_reforged.data.problem.unknown_field": "%1$s › неизвестное поле «%2$s» (пропущено)",
     "combat_reforged.data.problem.unknown_field.suggestion": "%1$s › неизвестное поле «%2$s» (пропущено). Возможно, вы имели в виду «%3$s»?",
-    "combat_reforged.data.problem.unknown_material": "%1$s › material_damage: неизвестный материал «%2$s» (пропущен)",
     "combat_reforged.data.problem.io": "%1$s: не удалось прочитать файл (%2$s)",
     "combat_reforged.field.weapon.format_version": "Версия формата",
     "combat_reforged.field.weapon.format_version.help": "Версия формата файла. Оставьте 1.",
     "combat_reforged.field.weapon.two_handed": "Двуручное оружие",
     "combat_reforged.field.weapon.two_handed.help": "true: пока оружие в основной руке, вторая рука скрыта и не используется, а оружие нельзя совмещать с оружием во второй руке.",
-    "combat_reforged.field.weapon.attack_speed": "Скорость атаки",
-    "combat_reforged.field.weapon.attack_speed.help": "Количество ударов в секунду при полной силе (ванильный меч: 1.6). Выше 2 часть ударов по одной цели теряется из-за её времени неуязвимости.",
-    "combat_reforged.field.weapon.attack_reach": "Дальность атаки",
-    "combat_reforged.field.weapon.attack_reach.help": "Расстояние в блоках, на котором можно ударить существо (в ванилле: 3).",
-    "combat_reforged.field.weapon.base_damage": "Базовый урон",
-    "combat_reforged.field.weapon.base_damage.help": "Урон деревянной версии, как в её описании. Каждый материал умножает его на свой коэффициент (камень ×1.25, железо ×1.5, алмаз ×1.75, незерит ×2, золото ×1) с округлением до половины единицы.",
-    "combat_reforged.field.weapon.material_damage": "Урон по материалам",
-    "combat_reforged.field.weapon.material_damage.help": "Задаёт урон отдельных материалов, например { \"golden\": 6 }. Остальные материалы используют base_damage × свой коэффициент.",
     "combat_reforged.field.weapon.armor_penetration": "Пробитие брони",
     "combat_reforged.field.weapon.armor_penetration.help": "Доля брони цели в %, которую игнорируют удары этого оружия (0 = броня работает как обычно, 100 = броня игнорируется). Только удары в ближнем бою. Показывается в описании, если больше 0.",
     "combat_reforged.field.weapon.disables_shield": "Отключает щиты",
@@ -314,8 +106,6 @@
     "combat_reforged.field.rules.dual_wield_speed_multiplier.help": "Множитель скорости атаки, когда в каждой руке по оружию (1.5 = на 50% быстрее).",
     "combat_reforged.field.rules.dual_wield_invulnerability_seconds": "Защита после удара с оружием в обеих руках",
     "combat_reforged.field.rules.dual_wield_invulnerability_seconds.help": "Сколько секунд цель игнорирует новые удары после удара, нанесённого с оружием в каждой руке (в ванилле: 0.5). Меньшие значения позволяют быстрому оружию, например кинжалам, засчитывать каждый удар.",
-    "combat_reforged.field.rules.balance_abilities": "Учитывать способности в балансе",
-    "combat_reforged.field.rules.balance_abilities.help": "true: оружие со способностями (парирование, рывок, комбо по области, эффекты при ударе, отключение щитов, пробивание брони) наносит немного меньше урона, максимум на 12% меньше. false: урон зависит только от чистого урона в секунду.",
     "combat_reforged.field.rules.pvp_max_hit_percent": "Предел удара в PvP",
     "combat_reforged.field.rules.pvp_max_hit_percent.help": "Наибольший урон, который один удар в ближнем бою может нанести другому игроку после брони, в % от его максимального здоровья. 100: без предела.",
     "combat_reforged.field.rules.parry_enabled": "Парирование включено",
@@ -341,19 +131,6 @@
     "combat_reforged.doc.readme.weapon_files": "Файлы оружия:",
     "combat_reforged.doc.readme.weapon_fields": "Поля файла оружия (все необязательны):",
     "combat_reforged.doc.readme.rules_fields": "Поля rules.json (все необязательны):",
-    "combat_reforged.configuration.broadsword": "Палаши",
-    "combat_reforged.configuration.spear": "Копья",
-    "combat_reforged.configuration.dagger": "Кинжалы",
-    "combat_reforged.configuration.scythe": "Косы",
-    "combat_reforged.configuration.rapier": "Рапиры",
-    "combat_reforged.configuration.sickle": "Серпы",
-    "combat_reforged.configuration.katana": "Катаны",
-    "combat_reforged.configuration.battleaxe": "Боевые топоры",
-    "combat_reforged.configuration.glaive": "Глефы",
-    "combat_reforged.configuration.hammer": "Молоты",
-    "combat_reforged.configuration.claymore": "Клейморы",
-    "combat_reforged.configuration.chakram": "Чакрамы",
-    "combat_reforged.configuration.sai": "Саи",
     "combat_reforged.editor.title": "Combat Reforged: редактор оружия",
     "combat_reforged.editor.codex_title": "Combat Reforged: кодекс",
     "combat_reforged.editor.codex_note": "Кодекс: только чтение. Операторы могут менять характеристики командой /combatreforged editor.",
@@ -384,7 +161,6 @@
     "combat_reforged.editor.reset.tooltip": "Возвращает все значения этого файла к значениям мода (сохранится, только если нажать «Сохранить»).",
     "combat_reforged.editor.info.client": "Эти настройки меняют только то, что видите вы.",
     "combat_reforged.editor.info.rules": "Правила, общие для всего оружия.",
-    "combat_reforged.editor.info.dps": "DPS (железо): %1$s (железный меч: %2$s, ×%3$s)",
     "combat_reforged.editor.status.fix_invalid": "Некоторые значения неверны (красные): исправьте их перед сохранением.",
     "combat_reforged.editor.status.nothing_to_save": "Нечего сохранять.",
     "combat_reforged.editor.status.saving": "Сохранение файлов: %s...",
@@ -405,8 +181,6 @@
     "combat_reforged.editor.saved": "Сохранено в %s.",
     "combat_reforged.editor.overridden": "Заменено настройкой с более высоким приоритетом: %s",
     "combat_reforged.command.no_permission": "Только операторы могут открыть редактор. Используйте /combatreforged codex, чтобы посмотреть характеристики оружия.",
-    "combat_reforged.command.dps.header": "DPS при полном заряде (железный меч: %s):",
-    "combat_reforged.command.dps.line": "%1$s: %2$s (железо), %3$s (незерит) (×%4$s)",
     "combat_reforged.command.reloaded": "Данные оружия перезагружены (проблем: %s).",
     "combat_reforged.field.rules.combat_changes_enabled": "Изменения боя (все)",
     "combat_reforged.field.rules.combat_changes_enabled.help": "false: возврат к обычному бою. Сразу отключает все системы ниже (дальность, размашистый удар, пробивание брони, эффекты при ударе, двуручность, бой двумя оружиями, парирование, рывок, комбо). Оружие остаётся в игре со своим уроном и скоростью атаки.",
@@ -428,8 +202,6 @@
     "combat_reforged.field.rules.perfect_parry_enabled.help": "false: удар в самом начале парирования лишь ослабляется, как и любой другой.",
     "combat_reforged.field.rules.guard_break_enabled": "Пробитие защиты",
     "combat_reforged.field.rules.guard_break_enabled.help": "false: топоры и оружие, отключающее щиты, больше не прерывают парирование.",
-    "combat_reforged.editor.external_combat_mod": "Обнаружен %s: системы боя отключены (наведите)",
-    "combat_reforged.editor.external_combat_mod.tooltip": "У %s свои комбо, дальность, бой двумя оружиями и двуручное оружие. Переключатели и настройки боя здесь сохраняются, но не действуют. Оружие и зачарования продолжают работать.",
     "attribute.combatreforged.dual_wielded": "Парное",
     "combat_reforged.field.weapon.dual_wielded": "Парное оружие",
     "combat_reforged.field.weapon.dual_wielded.help": "true: это оружие можно использовать с другим парным оружием во второй руке (удары чередуются между руками, атаки быстрее). Опция нужна обоим оружиям. Не учитывается, если оружие двуручное.",
@@ -512,91 +284,27 @@
     "combat_reforged.field.gear.shield_perfect_knockback.help": "Насколько идеальный блок щитом отбрасывает атакующего в ближнем бою. 0: без отбрасывания.",
     "combat_reforged.field.gear.reflect_arrows": "Идеальные блоки отражают стрелы",
     "combat_reforged.field.gear.reflect_arrows.help": "true: стрела, остановленная идеальным блоком щитом, летит обратно в стрелка.",
-    "combat_reforged.field.gear.replace_vanilla_gear": "Заменять обычное снаряжение (добыча, торговля)",
-    "combat_reforged.field.gear.replace_vanilla_gear.help": "true: добыча и жители дают версии мода вместо обычного предмета.",
-    "combat_reforged.field.gear.loot_upgrade_chance": "Шанс лучшего материала в добыче",
-    "combat_reforged.field.gear.loot_upgrade_chance.help": "В добыче, начиная с дерева: шанс в % перейти к следующему материалу (золото, камень, железо, алмаз, незерит). Бросается заново на каждом шаге.",
-    "combat_reforged.field.gear.enchanted_book_chance": "Шанс зачарованной книги в сундуках",
-    "combat_reforged.field.gear.enchanted_book_chance.help": "Шанс в %, что сундук в Незере или Энде содержит книгу с зачарованием мода.",
     "enchantment.combat_reforged.reflective": "Отражение",
     "enchantment.combat_reforged.reflective.desc": "Идеальное парирование возвращает атакующему 10/20/30% удара в ближнем бою вместе с его эффектами, затем предмет перезаряжается. Для щитов и всего, что может парировать. Несовместимо с ответным ударом.",
-    "enchantment.combat_reforged.vampirism": "Вампиризм",
-    "enchantment.combat_reforged.vampirism.desc": "Исцеляет на часть урона, нанесённого в ближнем бою. На сильных ударах исцеление растёт всё медленнее. Несовместимо с кровотечением.",
     "enchantment.combat_reforged.riposte": "Ответный удар",
     "enchantment.combat_reforged.riposte.desc": "После идеального парирования следующий удар наносит на 25/50/75% больше урона, сверх обычного бонуса. Несовместимо с отражением.",
     "enchantment.combat_reforged.momentum": "Разгон",
     "enchantment.combat_reforged.momentum.desc": "Сокращает перезарядку рывка на 15/30/45%.",
-    "enchantment.combat_reforged.execution": "Казнь",
-    "enchantment.combat_reforged.execution.desc": "Наносит на 10/20/30% больше урона целям с менее чем 30% здоровья.",
-    "enchantment.combat_reforged.bleeding": "Кровотечение",
-    "enchantment.combat_reforged.bleeding.desc": "Полностью заряженные удары вызывают кровотечение на 2/3/4 секунды. Только серпы, косы и катаны. Скелеты невосприимчивы. Несовместимо с заговором огня и вампиризмом.",
-    "effect.combat_reforged.bleeding": "Кровотечение",
-    "death.attack.combat_reforged.bleeding": "%1$s истёк кровью",
-    "death.attack.combat_reforged.bleeding.player": "%1$s истёк кровью в бою с %2$s",
     "combat_reforged.field.gear.reflective_cooldown_seconds": "Перезарядка отражения",
     "combat_reforged.field.gear.reflective_cooldown_seconds.help": "Сколько секунд оружие или щит перезаряжаются после отражения урона. 0: нет.",
-    "combat_reforged.tooltip.projectile_speed": "Скорость: ×%s",
-    "combat_reforged.field.gear.projectile_speed_multipliers": "Скорость снарядов по материалу",
-    "combat_reforged.field.gear.projectile_speed_multipliers.help": "Множитель скорости снарядов луков и арбалетов по ID материала, напр. {\"iron\": 1.2}. Урон стрелы зависит от этой скорости: 1 соответствует обычному луку, каменному. Остальные материалы используют свой множитель урона минус 0,34.",
-    "combat_reforged.field.gear.projectile_speed_cap": "Максимальная скорость снарядов",
-    "combat_reforged.field.gear.projectile_speed_cap.help": "Наибольший множитель скорости для любого материала. Урон стрелы зависит от скорости: это сдерживает очень сильные материалы из модов.",
-    "combat_reforged.field.gear.golden_draw_time": "Время натяжения золота",
-    "combat_reforged.field.gear.golden_draw_time.help": "Время натяжения или зарядки золотых луков и арбалетов относительно обычных. 0,5: вдвое быстрее.",
-    "entity.combat_reforged.shuriken": "Сюрикен",
-    "enchantment.combat_reforged.returning": "Возвращение",
-    "enchantment.combat_reforged.returning.desc": "Воткнувшиеся сюрикены возвращаются к вам, как трезубец с Верностью, и восстанавливают прочность. Несовместимо с Починкой.",
-    "combat_reforged.field.gear.shurikens": "Сюрикены",
-    "combat_reforged.field.gear.shurikens.help": "Настройки сюрикенов. Каждый бросок тратит 1 прочности, подбор возвращает её. Материал меняет скорость, как у луков.",
-    "combat_reforged.field.gear.shurikens.throw_speed": "Скорость броска",
-    "combat_reforged.field.gear.shurikens.throw_speed.help": "Скорость каменного сюрикена. Полностью натянутая стрела летит со скоростью 3. Урон зависит от скорости.",
-    "combat_reforged.field.gear.shurikens.base_damage": "Базовый урон",
-    "combat_reforged.field.gear.shurikens.base_damage.help": "Умножается на скорость при попадании и округляется вверх. У стрелы 2.",
-    "combat_reforged.field.gear.shurikens.cooldown_seconds": "Задержка между бросками",
-    "combat_reforged.field.gear.shurikens.cooldown_seconds.help": "Время до следующего броска этого сюрикена, в секундах.",
-    "combat_reforged.field.gear.mobs": "Мобы",
-    "combat_reforged.field.gear.mobs.help": "Оружие и поведение мобов. Вооружённых мобов не больше, чем в обычной игре: только моб, который получил бы обычное оружие или инструмент, может получить вместо него оружие мода.",
-    "combat_reforged.field.gear.mobs.upgrade_chance": "Шанс лучшего материала",
-    "combat_reforged.field.gear.mobs.upgrade_chance.help": "Шанс в % перейти к следующему материалу, бросается на каждом шаге, на высокой сложности в 1,5 раза выше. Предел: железо в Верхнем мире, алмаз в Незере и Энде, на высокой сложности на шаг больше (кроме Энда).",
-    "combat_reforged.field.gear.mobs.modded_weapon_chance": "Шанс оружия мода",
-    "combat_reforged.field.gear.mobs.modded_weapon_chance.help": "Шанс в %, что обычное оружие или инструмент враждебного моба станет оружием мода. 0: мобы сохраняют обычное оружие.",
-    "combat_reforged.field.gear.mobs.dual_wield_chance": "Шанс двух оружий",
-    "combat_reforged.field.gear.mobs.dual_wield_chance.help": "Среди мобов с оружием мода: шанс в % иметь оружие в каждой руке. Оружие из второй руки никогда не выпадает.",
-    "combat_reforged.field.gear.mobs.ninja_skeleton_chance": "Шанс скелета-ниндзя",
-    "combat_reforged.field.gear.mobs.ninja_skeleton_chance.help": "Шанс в %, что скелет метает сюрикены вместо стрельбы из лука.",
-    "combat_reforged.field.gear.mobs.captain_shield": "Щиты капитанов",
-    "combat_reforged.field.gear.mobs.captain_shield.help": "true: капитаны патрулей и рейдов носят щит мода во второй руке. Он никогда не выпадает.",
-    "combat_reforged.field.gear.mobs.guard_chance": "Шанс защиты",
-    "combat_reforged.field.gear.mobs.guard_chance.help": "Каждую секунду рядом с целью: шанс в %, что моб со щитом или парирующим оружием поднимет защиту. Топор её пробивает.",
-    "itemGroup.combat_reforged.weapons": "Combat Reforged",
     "stat.combat_reforged.perfect_parries": "Идеальные парирования",
-    "stat.combat_reforged.shurikens_thrown": "Брошено сюрикенов",
-    "stat.combat_reforged.health_stolen": "Украдено здоровья",
     "combat_reforged.editor.comparison": "Сравнение",
     "combat_reforged.editor.info.comparison": "Нажмите на столбец, чтобы отсортировать оружие.",
-    "combat_reforged.editor.comparison.material": "Сравнение: %s",
-    "combat_reforged.editor.comparison.next_material": "Следующий материал",
-    "combat_reforged.editor.comparison.projectile_speed": "Скорость снарядов: ×%s",
-    "combat_reforged.editor.comparison.column.name": "Оружие",
-    "combat_reforged.editor.comparison.column.name.tooltip": "Название оружия",
     "combat_reforged.editor.comparison.column.damage": "Урон",
     "combat_reforged.editor.comparison.column.damage.tooltip": "Урон за удар",
     "combat_reforged.editor.comparison.column.speed": "Скор.",
     "combat_reforged.editor.comparison.column.speed.tooltip": "Атак в секунду",
     "combat_reforged.editor.comparison.column.dps": "DPS",
     "combat_reforged.editor.comparison.column.dps.tooltip": "Урон в секунду одного оружия в реальном ритме игры",
-    "combat_reforged.editor.comparison.column.pair_dps": "Пара",
-    "combat_reforged.editor.comparison.column.pair_dps.tooltip": "Урон в секунду с таким оружием в каждой руке. Пусто, если это оружие нельзя держать парой.",
     "combat_reforged.editor.comparison.column.reach": "Дист.",
     "combat_reforged.editor.comparison.column.reach.tooltip": "Дальность атаки в блоках",
     "combat_reforged.editor.comparison.column.penetration": "Проб.",
     "combat_reforged.editor.comparison.column.penetration.tooltip": "Пробитие брони, в %",
-    "combat_reforged.editor.preset.applied": "%s применено. Изменения вступят в силу после сохранения.",
-    "combat_reforged.editor.preset.near_vanilla": "Близко к ванилле",
-    "combat_reforged.editor.preset.near_vanilla.tooltip": "Оружие сохраняет характеристики, дальность и размах. Без пробития брони, эффектов при ударе, двуручности, двух оружий, парирования, рывка и комбо. Настройки мобов возвращаются к стандартным.",
-    "combat_reforged.editor.preset.pvp_1_8": "PvP 1.8",
-    "combat_reforged.editor.preset.pvp_1_8.tooltip": "Только простое парирование из 1.8: без идеального парирования, пробития защиты, дальности оружия, размаха и других систем. Перезарядка атаки остаётся как в текущем Minecraft. Настройки мобов возвращаются к стандартным.",
-    "combat_reforged.editor.preset.hard": "Сложно",
-    "combat_reforged.editor.preset.hard.tooltip": "Все системы включены, с обычным балансом оружия. Мобы лучше экипированы, чаще носят оружие мода, защищаются вдвое чаще, и ниндзя больше.",
     "combat_reforged.info.two_handed": "Двуручное: вторая рука должна быть пустой, чтобы использовать это оружие.",
     "combat_reforged.info.dual_wielded": "Два оружия: держите такое оружие в каждой руке. Удары чередуются и наносятся быстрее.",
     "combat_reforged.info.parry": "Парирование: удерживайте правую кнопку, чтобы уменьшить удары спереди. Удар в самом начале блокируется полностью. Топоры пробивают защиту.",
@@ -605,18 +313,6 @@
     "combat_reforged.info.combo": "Комбо: последовательные удары идут особой серией атак, показанной на экране.",
     "combat_reforged.info.shield": "Поднимите его прямо перед ударом для идеального парирования: стрелы летят обратно, а атакующие в ближнем бою отбрасываются.",
     "combat_reforged.info.shield.simple": "Блокирует удары спереди, как обычный щит. Прочность зависит от материала.",
-    "combat_reforged.info.ranged": "От материала зависит только скорость снаряда, а за ней и урон стрелы. Золото заряжается вдвое быстрее, но стреляет слабее.",
-    "combat_reforged.info.shuriken": "Правая кнопка для броска. Каждый бросок стоит 1 прочности; подбор сюрикена возвращает её. Последний бросок уничтожает предмет, а подбор этого сюрикена восстанавливает его.",
-    "tag.item.combat_reforged.bows": "Луки",
-    "tag.item.combat_reforged.crossbows": "Арбалеты",
-    "tag.item.combat_reforged.shields": "Щиты",
-    "tag.item.combat_reforged.shurikens": "Сюрикены",
-    "tag.item.combat_reforged.melee_weapons": "Оружие ближнего боя",
-    "tag.item.combat_reforged.enchantable.bleeding": "Зачаровываемые Кровотечением",
-    "tag.item.combat_reforged.enchantable.dashing": "Оружие с рывком",
-    "tag.item.combat_reforged.enchantable.parry_weapons": "Парирующее оружие",
-    "tag.item.combat_reforged.enchantable.parrying": "Парирующие предметы",
-    "tag.item.combat_reforged.weapon_materials.netherite_template": "Шаблоны незеритового улучшения",
     "combat_reforged.editor.tutorials": "Обучение",
     "combat_reforged.editor.info.tutorials": "Короткие анимированные сцены о каждой боевой системе.",
     "combat_reforged.editor.tutorials.open": "Смотреть",
@@ -684,7 +380,43 @@
     "combat_reforged.tutorial.combos.intro": "Некоторое оружие связывает серию ударов, если бить в ритм.",
     "combat_reforged.tutorial.combos.hits": "Каждый удар в цель продвигает комбо, показанное на экране.",
     "combat_reforged.tutorial.combos.finisher": "Последний удар бьёт по целой области: %s бл. на %s°.",
-    "combat_reforged.tutorial.combos.reset": "Если не попадать %s с, комбо начнётся заново."
-  },
-  "attribute.name.player.sweeping_damage_ratio": "Коэффициент разящего удара"
+    "combat_reforged.tutorial.combos.reset": "Если не попадать %s с, комбо начнётся заново.",
+    "combat_reforged.data.problem.unknown_parent": "%s: родитель «%s» не существует и игнорируется.",
+    "combat_reforged.command.scan.result": "Найдено оружия: %s, пропущено: %s. Отчёт: %s",
+    "combat_reforged.command.scan.failed": "Не удалось записать отчёт: %s",
+    "combat_reforged.command.scan.line": "%s: %s",
+    "combat_reforged.editor.managed_by_better_combat": "Better Combat управляет дальностью, размашистыми ударами, двуручным оружием и боем с двух рук.",
+    "combat_reforged.editor.managed_by_better_combat.tooltip": "Пока загружен Better Combat, эти настройки не действуют. Комбо, парирование, эффекты ударов и чары продолжают работать.",
+    "combat_reforged.tooltip.managed_by_better_combat": "%s (Better Combat)",
+    "combat_reforged.editor.info.weapon": "Поведение этого оружия или архетипа.",
+    "combat_reforged.editor.detected.none": "Оружие с профилем не найдено.",
+    "combat_reforged.editor.detected.weapon": "%s: %s (%s)",
+    "combat_reforged.editor.detected.next_weapon": "Следующее оружие",
+    "combat_reforged.editor.detected.next_archetype": "Назначить следующий архетип",
+    "combat_reforged.editor.detected.assigned": "Назначен архетип %s. Файл оружия сохранён.",
+    "combat_reforged.editor.detected.source.file": "задано файлом",
+    "combat_reforged.editor.detected.source.tag": "задано тегом",
+    "combat_reforged.editor.detected.source.better_combat": "по файлу Better Combat",
+    "combat_reforged.editor.detected.source.epic_fight": "по файлу Epic Fight",
+    "combat_reforged.editor.detected.source.name": "по названию",
+    "combat_reforged.editor.detected.source.fallback": "обычное оружие",
+    "combat_reforged.field.weapon.parent": "Архетип",
+    "combat_reforged.field.weapon.parent.help": "Архетип, на котором основан файл. Меняются только указанные здесь поля.",
+    "combat_reforged.field.weapon.reach_bonus": "Бонус дальности",
+    "combat_reforged.field.weapon.reach_bonus.help": "Блоки, прибавляемые к дальности предмета. Может быть отрицательным.",
+    "combat_reforged.field.weapon.exact_reach": "Точная дальность",
+    "combat_reforged.field.weapon.exact_reach.help": "Показанная дальность действует и в творческом режиме.",
+    "combat_reforged.field.weapon.combo.max_bonus_damage": "Максимальный бонус урона",
+    "combat_reforged.field.weapon.combo.max_bonus_damage.help": "Наибольший урон, добавляемый особым ударом. 0 — без предела.",
+    "combat_reforged.field.weapon.combo.finisher": "Последний удар",
+    "combat_reforged.field.weapon.combo.finisher.help": "Меняет только последний удар, не переписывая список.",
+    "combat_reforged.field.weapon.combo.steps.gesture": "Движение",
+    "combat_reforged.field.weapon.combo.steps.gesture.help": "Движение руки при этом ударе. Better Combat использует свои анимации.",
+    "combat_reforged.field.weapon.combo.steps.sound": "Звук",
+    "combat_reforged.field.weapon.combo.steps.sound.help": "Звук этого удара.",
+    "combat_reforged.field.weapon.combo.steps.particles": "Частицы",
+    "combat_reforged.field.weapon.combo.steps.particles.help": "Частицы этого удара.",
+    "combat_reforged.field.gear.mob_guard_chance": "Шанс защиты мобов",
+    "combat_reforged.field.gear.mob_guard_chance.help": "Шанс в %, что моб ближнего боя поднимет защиту."
+  }
 }

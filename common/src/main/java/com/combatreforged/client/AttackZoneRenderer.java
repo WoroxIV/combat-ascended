@@ -9,7 +9,7 @@ import com.combatreforged.data.ComboDefinition;
 import com.combatreforged.data.ComboStep;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -79,7 +79,7 @@ public final class AttackZoneRenderer {
         boolean custom = WeaponData.rules().sweepActive();
         if (custom && !definition.sweep().enabled()) return;
         AABB zone = custom
-                ? WeaponItem.sweepZone(definition, target)
+                ? WeaponActions.sweepZone(definition, target)
                 : target.getBoundingBox().inflate(VANILLA_SWEEP_RADIUS, VANILLA_SWEEP_HEIGHT, VANILLA_SWEEP_RADIUS);
         LevelRenderer.renderLineBox(pose, lines, zone.move(camera.reverse()), GREEN[0], GREEN[1], GREEN[2], GREEN[3]);
     }

@@ -2,15 +2,11 @@ package com.combatreforged.fabric.mixin;
 
 import com.combatreforged.client.DualParryHandRenderer;
 import com.combatreforged.combat.TwoHandedSystem;
-import com.combatreforged.fabric.FabricGear;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,8 +27,4 @@ public abstract class ItemInHandRendererFabricMixin {
         }
     }
 
-    @WrapOperation(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z"))
-    private boolean combatreforged$modCrossbow(ItemStack stack, Item item, Operation<Boolean> original) {
-        return original.call(stack, item) || FabricGear.isModVersionOf(stack, item);
-    }
 }

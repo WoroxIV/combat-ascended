@@ -1,9 +1,5 @@
 package com.combatreforged.platform;
 
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponShieldItem;
-import com.combatreforged.item.WeaponType;
 import com.combatreforged.network.Payload;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -84,15 +80,7 @@ public interface Platform {
     /** Cet objet accepte cet enchantement sur une table ou une enclume. */
     boolean supportsEnchantment(ItemStack stack, Enchantment enchantment);
 
-    /** Une arme : Forge a besoin d'une version à lui, pour le rendu en main. */
-    default WeaponItem createWeapon(WeaponType type, WeaponMaterial material, Item.Properties properties) {
-        return new WeaponItem(type, material, properties);
-    }
 
-    /** Un bouclier : Forge a besoin d'une version à lui, pour son modèle 3D. */
-    default WeaponShieldItem createShield(WeaponMaterial material, Item.Properties properties) {
-        return new WeaponShieldItem(material, properties);
-    }
 
     /** Joueur simulé, pour les tests automatiques. */
     ServerPlayer createFakePlayer(ServerLevel level);

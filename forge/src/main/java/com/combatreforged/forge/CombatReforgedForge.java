@@ -6,34 +6,31 @@ import com.combatreforged.registry.ModAttributes;
 import com.combatreforged.registry.ModStats;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
-import java.util.List;
 
 /** Point d'entrée Forge (chargé côté client et serveur). */
 @Mod(CombatReforged.MODID)
 public final class CombatReforgedForge {
 
     public CombatReforgedForge() {
+        if (ModList.get().isLoaded("epicfight")) {
+            throw new IllegalStateException("Combat Reforged and Epic Fight cannot be installed together: both replace the combat system. Remove one of the two.");
+        }
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Platform.set(new ForgePlatform(modEventBus));
         CombatReforged.init();
         ForgeNetwork.register();
 
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::addToCreativeTab);
         modEventBus.addListener(this::addAttributes);
         MinecraftForge.EVENT_BUS.register(ForgeGameEvents.class);
         if (FMLEnvironment.dist == Dist.CLIENT) CombatReforgedForgeClient.init(modEventBus);
@@ -42,14 +39,6 @@ public final class CombatReforgedForge {
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(ModStats::registerFormats);
         CombatReforged.prepareConfigFolder();
-    }
-
-    /** Le bouclier, l'arc et l'arbalète vanilla sont remplacés par ceux du mod, qui ont leur propre onglet. */
-    private void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() != CreativeModeTabs.COMBAT) return;
-        for (Item replaced : List.of(Items.SHIELD, Items.BOW, Items.CROSSBOW)) {
-            event.getEntries().remove(new ItemStack(replaced));
-        }
     }
 
     /** Toutes les créatures reçoivent la pénétration d'armure (valeur 0) : joueurs, mais aussi mobs qui tiendraient une arme. */

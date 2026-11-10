@@ -1,9 +1,6 @@
 package com.combatreforged.combat;
 
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponMaterials;
-import com.combatreforged.item.WeaponShieldItem;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,20 +43,23 @@ public enum ParryMaterial {
 
     /** Famille de cet objet. Tout ce qui n'est pas reconnu (matériaux d'autres mods, objets sans palier) est du métal. */
     public static ParryMaterial of(ItemStack stack) {
-        if (stack.getItem() instanceof WeaponItem weapon) return of(weapon.getMaterial());
-        if (stack.getItem() instanceof WeaponShieldItem shield) return of(shield.getMaterial());
         if (stack.is(Items.SHIELD)) return WOOD;
+        ParryMaterial named = fromName(BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath());
+        if (named != null) return named;
         if (stack.getItem() instanceof TieredItem tiered) return of(tiered.getTier());
         return METAL;
     }
 
-    private static ParryMaterial of(WeaponMaterial material) {
-        if (material == WeaponMaterials.WOODEN) return WOOD;
-        if (material == WeaponMaterials.STONE) return STONE;
-        if (material == WeaponMaterials.GOLDEN) return GOLD;
-        if (material == WeaponMaterials.DIAMOND) return DIAMOND;
-        if (material == WeaponMaterials.NETHERITE) return NETHERITE;
-        return METAL;
+    /** Le premier mot d'un identifiant comme "golden_katana" : marche pour tous les mods qui suivent la convention vanilla. */
+    private static ParryMaterial fromName(String path) {
+        return switch (path.split("_")[0]) {
+            case "wooden", "wood" -> WOOD;
+            case "stone" -> STONE;
+            case "golden", "gold" -> GOLD;
+            case "diamond" -> DIAMOND;
+            case "netherite" -> NETHERITE;
+            default -> null;
+        };
     }
 
     private static ParryMaterial of(Tier tier) {

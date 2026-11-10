@@ -1,7 +1,7 @@
 package com.combatreforged.forge.mixin;
 
 import com.combatreforged.combat.CombatEvents;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +23,7 @@ public abstract class PlayerForgeMixin {
     public double getEntityReach() {
         Player player = (Player) (Object) this;
         double reach = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
-        return reach == 0.0D || !player.isCreative() || WeaponItem.hasExactReach(player) ? reach : reach + CREATIVE_REACH_BONUS;
+        return reach == 0.0D || !player.isCreative() || WeaponActions.hasExactReach(player) ? reach : reach + CREATIVE_REACH_BONUS;
     }
 
     /** Armes sans coup balayé, et coup spécial en zone qui remplace le balayage. */

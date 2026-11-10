@@ -23,8 +23,8 @@ public record DataProblem(Kind kind, String source, @Nullable String field, @Nul
         INVALID,
         /** Champ inconnu (faute de frappe ?) : il est ignoré. {@code detail} = nom suggéré, ou null. */
         UNKNOWN_FIELD,
-        /** Matériau inconnu dans material_damage : il est ignoré. */
-        UNKNOWN_MATERIAL,
+        /** L'archétype indiqué par "parent" n'existe pas : le fichier s'applique sans lui. {@code detail} = cet archétype. */
+        UNKNOWN_PARENT,
         /** Un objet de "items" est déjà pris par un autre fichier d'arme, qui garde la priorité. {@code field} = cet autre fichier. */
         ITEM_CONFLICT,
         /** Le fichier n'a pas pu être lu. */
@@ -42,7 +42,7 @@ public record DataProblem(Kind kind, String source, @Nullable String field, @Nul
             case UNKNOWN_FIELD -> detail != null
                     ? Component.translatable(KEY_PREFIX + "unknown_field.suggestion", source, field, detail)
                     : Component.translatable(KEY_PREFIX + "unknown_field", source, field);
-            case UNKNOWN_MATERIAL -> Component.translatable(KEY_PREFIX + "unknown_material", source, detail);
+            case UNKNOWN_PARENT -> Component.translatable(KEY_PREFIX + "unknown_parent", source, detail);
             case ITEM_CONFLICT -> Component.translatable(KEY_PREFIX + "item_conflict", source, detail, field);
             case IO -> Component.translatable(KEY_PREFIX + "io", source, detail);
         };
@@ -57,7 +57,7 @@ public record DataProblem(Kind kind, String source, @Nullable String field, @Nul
             case INVALID -> source + " > " + field + ": " + detail + " (value ignored)";
             case UNKNOWN_FIELD -> source + " > unknown field \"" + field + "\" (ignored)"
                     + (detail != null ? ". Did you mean \"" + detail + "\"?" : "");
-            case UNKNOWN_MATERIAL -> source + " > material_damage: unknown material \"" + detail + "\" (ignored)";
+            case UNKNOWN_PARENT -> source + " > parent \"" + detail + "\" does not exist (ignored)";
             case ITEM_CONFLICT -> source + " > items: \"" + detail + "\" is already used by " + field + " (ignored here)";
             case IO -> source + ": the file could not be read (" + detail + ")";
         };

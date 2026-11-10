@@ -1,8 +1,7 @@
 package com.combatreforged.fabric;
 
 import com.combatreforged.CombatReforged;
-import com.combatreforged.item.ShurikenItem;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.combatreforged.network.Payload;
 import com.combatreforged.platform.Platform;
 import com.combatreforged.platform.Registered;
@@ -78,7 +77,7 @@ final class FabricPlatform implements Platform {
     @Override
     public double entityReach(Player player) {
         double reach = player.getAttributeValue(FabricAttributes.ENTITY_REACH.get());
-        return reach == 0.0D || !player.isCreative() || WeaponItem.hasExactReach(player) ? reach : reach + CREATIVE_REACH_BONUS;
+        return reach == 0.0D || !player.isCreative() || WeaponActions.hasExactReach(player) ? reach : reach + CREATIVE_REACH_BONUS;
     }
 
     /** Convention de Fabric en 1.20.1 : "c:ingots/steel" s'écrit "c:steel_ingots". La même table que dans fabric/build.gradle. */
@@ -144,7 +143,7 @@ final class FabricPlatform implements Platform {
 
     @Override
     public boolean supportsEnchantment(ItemStack stack, Enchantment enchantment) {
-        return stack.getItem() instanceof ShurikenItem shuriken ? shuriken.supportsEnchantment(stack, enchantment) : enchantment.canEnchant(stack);
+        return enchantment.canEnchant(stack);
     }
 
     @Override

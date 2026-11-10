@@ -1,6 +1,7 @@
 package com.combatreforged.network;
 
 import com.combatreforged.data.DataResults;
+import com.combatreforged.combat.WeaponProfiles;
 import com.combatreforged.data.WeaponData;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
@@ -16,6 +17,11 @@ import net.minecraft.network.FriendlyByteBuf;
 public record WeaponDataSyncPayload(WeaponData.Snapshot snapshot) implements Payload {
     /** Taille maximale du JSON (1 million de caractères) : très au-dessus des besoins réels. */
     private static final int MAX_LENGTH = 1 << 20;
+
+    /** Les données en vigueur, avec le profil de chaque objet : le client n'a plus rien à calculer. */
+    public static WeaponDataSyncPayload current() {
+        return new WeaponDataSyncPayload(WeaponData.current().withItems(WeaponProfiles.table()));
+    }
 
     public static WeaponDataSyncPayload read(FriendlyByteBuf buffer) {
         return fromJson(buffer.readUtf(MAX_LENGTH));

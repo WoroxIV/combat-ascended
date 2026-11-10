@@ -34,7 +34,7 @@ public class MobGuardGoal extends Goal {
         if (!WeaponData.rules().parryActive() || MobCombat.isGuardBroken(this.mob) || MobCombat.guardHand(this.mob) == null) return false;
         if (this.mob.distanceToSqr(target) > RANGE_SQUARED) return false;
         this.nextAttempt = now + ATTEMPT_INTERVAL_TICKS;
-        return this.mob.getRandom().nextDouble() * PERCENT < WeaponData.gear().mobs().guardChance();
+        return this.mob.getRandom().nextDouble() * PERCENT < WeaponData.gear().mobGuardChance();
     }
 
     @Override

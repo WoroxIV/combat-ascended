@@ -18,22 +18,23 @@ import com.combatreforged.data.ComboDefinition;
 import com.combatreforged.data.DataField;
 import com.combatreforged.data.DataProblem;
 import com.combatreforged.data.FieldSet;
-import com.combatreforged.data.GearDefinition;
 import com.combatreforged.data.JsonTree;
 import com.combatreforged.data.JsonUtil;
-import com.combatreforged.data.RulesPreset;
 import com.combatreforged.data.WeaponAbility;
-import com.combatreforged.data.WeaponComparison;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDataLoader;
 import com.combatreforged.data.WeaponDefinition;
+import com.combatreforged.registry.ModAttributes;
+import com.google.gson.JsonArray;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Items;
 import com.combatreforged.editor.EditorDocument;
 import com.combatreforged.editor.EditorTarget;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponMaterials;
-import com.combatreforged.item.WeaponType;
 import com.combatreforged.network.SaveDocumentPayload;
-import com.combatreforged.registry.ModItems;
 import com.combatreforged.tutorial.TutorialScenes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -72,6 +73,10 @@ import java.util.function.Function;
  * tout seul.
  */
 public final class WeaponEditorScreen extends Screen {
+    private static final double PLAYER_BASE_DAMAGE = 1.0D;
+    private static final double PLAYER_BASE_SPEED = 4.0D;
+    private static final double PLAYER_BASE_REACH = 3.0D;
+    private static final double TICKS_PER_SECOND = 20.0D;
     static final String KEY = CombatReforged.MODID + ".editor.";
     private static final String CLIENT_PAGE = "client";
     private static final String TOOLTIPS_PAGE = "tooltips";
@@ -110,10 +115,9 @@ public final class WeaponEditorScreen extends Screen {
 
     private String selected = EditorDocument.RULES_ID;
     /** Arme montrée dans l'aperçu de la page Tooltips. */
-    private WeaponType previewType = WeaponType.KATANA;
-    private WeaponComparison.Column comparisonColumn = WeaponComparison.Column.DPS;
-    private boolean comparisonDescending = true;
-    private WeaponMaterial comparisonMaterial = WeaponMaterials.IRON;
+    private int previewIndex;
+    /** Arme choisie sur la page Armes détectées. */
+    private int detectedIndex;
     private EditorTarget target = EditorTarget.ALL_WORLDS;
     private Component status = Component.empty();
     private int statusColor = INFO_COLOR;
@@ -177,9 +181,7 @@ public final class WeaponEditorScreen extends Screen {
         documentList.add(COMPARISON_PAGE, Component.translatable(KEY + "comparison"));
         documentList.add(TUTORIALS_PAGE, Component.translatable(KEY + "tutorials"));
         for (EditorDocument document : model.documents()) {
-            if (document.type() != null) {
-                documentList.add(document.id(), Component.translatable(CombatReforged.MODID + ".configuration." + document.id()));
-            }
+            if (document.isWeapon()) documentList.add(document.id(), documentName(document));
         }
         documentList.add(TOOLTIPS_PAGE, Component.translatable(KEY + "tooltips"));
         documentList.add(CLIENT_PAGE, Component.translatable(KEY + "client"));
@@ -266,7 +268,7 @@ public final class WeaponEditorScreen extends Screen {
     private boolean isCollapsed(String key) {
         Boolean toggled = sectionToggles.get(key);
         if (toggled != null) return toggled;
-        if (isLocalPage(selected) || model.document(selected).type() == null) return false;
+        if (isLocalPage(selected) || !model.document(selected).isWeapon()) return false;
         JsonObject values = model.working(selected);
         String ability = values.has(WeaponDefinition.ABILITY.name()) ? values.get(WeaponDefinition.ABILITY.name()).getAsString() : "";
         return switch (key) {
@@ -288,16 +290,15 @@ public final class WeaponEditorScreen extends Screen {
         } else if (selected.equals(TOOLTIPS_PAGE)) {
             addTooltipRows();
         } else if (selected.equals(COMPARISON_PAGE)) {
-            addComparisonRows();
+            addDetectedRows();
         } else if (selected.equals(TUTORIALS_PAGE)) {
             addTutorialRows();
         } else {
-            CombatCompat.externalCombatModName().ifPresent(name -> fieldList.add(fieldList.new NoteRow(
-                    Component.translatable(KEY + "external_combat_mod", name),
-                    Component.translatable(KEY + "external_combat_mod.tooltip", name), WARNING_COLOR, 0)));
-            if (selected.equals(EditorDocument.RULES_ID) && canEdit) addPresetRow();
+            if (CombatCompat.betterCombat()) fieldList.add(fieldList.new NoteRow(
+                    Component.translatable(KEY + "managed_by_better_combat"),
+                    Component.translatable(KEY + "managed_by_better_combat.tooltip"), WARNING_COLOR, 0));
             EditorDocument document = model.document(selected);
-            String sectionTitle = document.type() == null ? KEY + "section.rules" : KEY + "section.stats";
+            String sectionTitle = document.isWeapon() ? KEY + "section.stats" : KEY + "section.rules";
             addSection("", Component.translatable(sectionTitle), null, 0);
             if (!isCollapsed("")) {
                 for (DataField<?> field : FieldList.simpleFields(document.fields())) {
@@ -401,67 +402,71 @@ public final class WeaponEditorScreen extends Screen {
         return text;
     }
 
-    /** Préréglages de la page Règles. Comme toute modification, ils ne sont appliqués qu'une fois enregistrés. */
-    private void addPresetRow() {
-        List<Button> presets = new ArrayList<>();
-        for (RulesPreset preset : RulesPreset.values()) {
-            presets.add(Button.builder(Component.translatable(KEY + "preset." + preset.id()), pressed -> applyPreset(preset))
-                    .tooltip(Tooltip.create(Component.translatable(KEY + "preset." + preset.id() + ".tooltip"))).build());
+    /** Nom affiché d'un archétype ou d'un fichier d'arme : traduit s'il existe une traduction, sinon tiré de son identifiant. */
+    private static Component documentName(EditorDocument document) {
+        ResourceLocation id = document.weaponId();
+        String words = java.util.Arrays.stream(id.getPath().split("[_/]")).map(word -> word.isEmpty() ? word : Character.toUpperCase(word.charAt(0)) + word.substring(1)).collect(java.util.stream.Collectors.joining(" "));
+        if (document.isArchetype()) return Component.translatableWithFallback(CombatReforged.MODID + ".archetype." + id.getPath(), words);
+        return Component.literal(words + " (" + id.getNamespace() + ")");
+    }
+
+    /** Page Armes détectées : chaque arme, son archétype, et ses stats réelles. Changer un archétype écrit un fichier d'arme. */
+    private void addDetectedRows() {
+        List<Map.Entry<ResourceLocation, WeaponData.ItemProfile>> weapons = detectedWeapons();
+        if (weapons.isEmpty()) {
+            fieldList.add(fieldList.new NoteRow(Component.translatable(KEY + "detected.none"), 0));
+            return;
         }
-        fieldList.add(fieldList.new WideButtonsRow(presets));
-    }
-
-    private void applyPreset(RulesPreset preset) {
-        JsonObject rules = model.working(EditorDocument.RULES_ID).deepCopy();
-        preset.applyToRules(rules);
-        model.replace(EditorDocument.RULES_ID, rules);
-        JsonObject gear = model.working(EditorDocument.GEAR_ID).deepCopy();
-        preset.applyToGear(gear);
-        model.replace(EditorDocument.GEAR_ID, gear);
-        rebuildFields(false);
-        status(Component.translatable(KEY + "preset.applied", Component.translatable(KEY + "preset." + preset.id())), WARNING_COLOR);
-    }
-
-    /** Tableau comparatif : valeurs en cours de modification, donc un changement non enregistré s'y voit tout de suite. */
-    private void addComparisonRows() {
-        List<WeaponMaterial> materials = WeaponMaterials.active();
-        ItemStack sample = new ItemStack(ModItems.get(WeaponType.KATANA, comparisonMaterial).get());
-        fieldList.add(fieldList.new ItemPreviewRow(Component.translatable(KEY + "comparison.material", sample.getHoverName()), () -> sample,
-                Button.builder(Component.translatable(KEY + "comparison.next_material"), pressed -> {
-                    comparisonMaterial = materials.get((materials.indexOf(comparisonMaterial) + 1) % materials.size());
+        detectedIndex = Math.floorMod(detectedIndex, weapons.size());
+        Map.Entry<ResourceLocation, WeaponData.ItemProfile> chosen = weapons.get(detectedIndex);
+        ItemStack sample = new ItemStack(BuiltInRegistries.ITEM.get(chosen.getKey()));
+        Component reason = Component.translatable(KEY + "detected.source." + chosen.getValue().source().getSerializedName());
+        fieldList.add(fieldList.new ItemPreviewRow(Component.translatable(KEY + "detected.weapon", sample.getHoverName(), chosen.getValue().profile().toString(), reason), () -> sample,
+                Button.builder(Component.translatable(KEY + "detected.next_weapon"), pressed -> {
+                    detectedIndex = (detectedIndex + 1) % weapons.size();
                     rebuildFields(false);
                 }).size(PREVIEW_BUTTON_WIDTH, BUTTON_HEIGHT).build()));
-        GearDefinition gear = GearDefinition.CODEC.parse(JsonOps.INSTANCE, model.working(EditorDocument.GEAR_ID)).result().orElse(WeaponData.gear());
-        fieldList.add(fieldList.new NoteRow(Component.translatable(KEY + "comparison.projectile_speed", Docs.number(gear.projectileSpeedMultiplier(comparisonMaterial))), 0));
+        if (canEdit && mode == Mode.IN_GAME) {
+            fieldList.add(fieldList.new WideButtonsRow(List.of(Button.builder(Component.translatable(KEY + "detected.next_archetype"), pressed -> assignNextArchetype(chosen)).build())));
+        }
 
         List<Button> header = new ArrayList<>();
-        for (WeaponComparison.Column column : WeaponComparison.Column.values()) {
-            String arrow = column != comparisonColumn ? "" : comparisonDescending ? " ▼" : " ▲";
-            header.add(Button.builder(Component.translatable(KEY + "comparison.column." + column.id()).append(arrow), pressed -> sortComparison(column))
-                    .tooltip(Tooltip.create(Component.translatable(KEY + "comparison.column." + column.id() + ".tooltip"))).build());
+        for (String column : List.of("damage", "speed", "dps", "reach", "penetration")) {
+            header.add(Button.builder(Component.translatable(KEY + "comparison.column." + column), pressed -> { })
+                    .tooltip(Tooltip.create(Component.translatable(KEY + "comparison.column." + column + ".tooltip"))).build());
         }
         fieldList.add(fieldList.new TableHeaderRow(header));
-
-        Map<WeaponType, WeaponDefinition> weapons = new EnumMap<>(WeaponType.class);
-        for (EditorDocument document : model.documents()) {
-            if (document.type() != null) {
-                weapons.put(document.type(), WeaponDefinition.CODEC.parse(JsonOps.INSTANCE, model.working(document.id())).result().orElse(WeaponData.weapon(document.type())));
-            }
-        }
-        int highlighted = comparisonColumn.ordinal() - 1;
-        for (WeaponComparison.Row row : WeaponComparison.rows(weapons, comparisonMaterial, comparisonColumn, comparisonDescending)) {
-            fieldList.add(fieldList.new TableRow(new ItemStack(ModItems.get(row.type(), comparisonMaterial).get()),
-                    Component.translatable(CombatReforged.MODID + ".configuration." + row.type().id()),
-                    List.of(Docs.number(row.damage()), Docs.number(row.speed()), Docs.number(row.dps()), row.pairDps() > 0.0D ? Docs.number(row.pairDps()) : "—",
-                            Docs.number(row.reach()), Docs.number(row.penetration())), highlighted));
+        for (Map.Entry<ResourceLocation, WeaponData.ItemProfile> weapon : weapons) {
+            ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(weapon.getKey()));
+            double damage = PLAYER_BASE_DAMAGE + modifierTotal(stack, Attributes.ATTACK_DAMAGE);
+            double speed = PLAYER_BASE_SPEED + modifierTotal(stack, Attributes.ATTACK_SPEED);
+            double ticks = Math.max(1.0D, Math.ceil(TICKS_PER_SECOND / speed - 0.5D));
+            fieldList.add(fieldList.new TableRow(stack, stack.getHoverName(), List.of(Docs.number(damage), Docs.number(speed), Docs.number(damage * TICKS_PER_SECOND / ticks),
+                    Docs.number(PLAYER_BASE_REACH + modifierTotal(stack, Platform.get().entityReachAttribute())), Docs.number(modifierTotal(stack, ModAttributes.armorPenetration()) * 100.0D)), 2));
         }
     }
 
-    /** Cliquer sur la colonne déjà triée inverse le sens. Les noms montent, les nombres descendent. */
-    private void sortComparison(WeaponComparison.Column column) {
-        comparisonDescending = column == comparisonColumn ? !comparisonDescending : column != WeaponComparison.Column.NAME;
-        comparisonColumn = column;
-        rebuildFields(false);
+    private static List<Map.Entry<ResourceLocation, WeaponData.ItemProfile>> detectedWeapons() {
+        return WeaponData.current().items().entrySet().stream().sorted(Map.Entry.comparingByKey()).toList();
+    }
+
+    private static double modifierTotal(ItemStack stack, Attribute attribute) {
+        return stack.getAttributeModifiers(EquipmentSlot.MAINHAND).get(attribute).stream().mapToDouble(modifier -> modifier.getAmount()).sum();
+    }
+
+    /** Donne à cette arme l'archétype suivant, en écrivant un fichier d'arme : la détection automatique ne décide plus pour elle. */
+    private void assignNextArchetype(Map.Entry<ResourceLocation, WeaponData.ItemProfile> weapon) {
+        List<ResourceLocation> archetypes = WeaponData.current().archetypes().keySet().stream().sorted().toList();
+        int index = archetypes.indexOf(weapon.getValue().profile());
+        ResourceLocation next = archetypes.get((index + 1) % archetypes.size());
+        JsonObject json = new JsonObject();
+        json.addProperty(WeaponDefinition.PARENT.name(), next.toString());
+        JsonArray items = new JsonArray();
+        items.add(weapon.getKey().toString());
+        json.add(WeaponDefinition.ITEMS.name(), items);
+        String file = "weapon/" + CombatReforged.MODID + ":custom/" + weapon.getKey().getNamespace() + "_" + weapon.getKey().getPath();
+        Platform.get().sendToServer(new SaveDocumentPayload(file, target.ordinal(), json.toString(), true));
+        status(Component.translatable(KEY + "detected.assigned", next.toString()), INFO_COLOR);
     }
 
     private void addClientRows() {
@@ -485,11 +490,8 @@ public final class WeaponEditorScreen extends Screen {
         fieldList.add(fieldList.new NoteRow(Component.translatable(KEY + "tooltips.note", ModKeyMappings.weaponDetailsKeyName()),
                 Component.translatable(KEY + "tooltips.note.tooltip"), INFO_COLOR, 0));
         fieldList.add(fieldList.new ItemPreviewRow(Component.translatable(KEY + "tooltips.preview"),
-                () -> new ItemStack(ModItems.get(previewType, WeaponMaterials.IRON).get()),
-                Button.builder(Component.translatable(KEY + "tooltips.next_weapon"), pressed -> {
-                    WeaponType[] types = WeaponType.values();
-                    previewType = types[(previewType.ordinal() + 1) % types.length];
-                }).size(PREVIEW_BUTTON_WIDTH, BUTTON_HEIGHT).build()));
+                this::previewStack,
+                Button.builder(Component.translatable(KEY + "tooltips.next_weapon"), pressed -> previewIndex++).size(PREVIEW_BUTTON_WIDTH, BUTTON_HEIGHT).build()));
 
         List<Button> presets = new ArrayList<>();
         for (ClientConfig.TooltipPreset preset : ClientConfig.TooltipPreset.values()) {
@@ -516,6 +518,13 @@ public final class WeaponEditorScreen extends Screen {
                             value -> Component.literal("■■■").withStyle(value), COLOR_BUTTON_WIDTH),
                     reset)));
         }
+    }
+
+    /** Arme de l'aperçu : une arme qui a un profil, sinon l'épée en fer. */
+    private ItemStack previewStack() {
+        List<Map.Entry<ResourceLocation, WeaponData.ItemProfile>> weapons = detectedWeapons();
+        if (weapons.isEmpty()) return new ItemStack(Items.IRON_SWORD);
+        return new ItemStack(BuiltInRegistries.ITEM.get(weapons.get(Math.floorMod(previewIndex, weapons.size())).getKey()));
     }
 
     /** Bouton qui fait défiler les valeurs d'une préférence (enregistrée tout de suite). */
@@ -553,12 +562,7 @@ public final class WeaponEditorScreen extends Screen {
         } else if (selected.equals(EditorDocument.GEAR_ID)) {
             cachedInfo = Component.translatable(KEY + "info.gear");
         } else {
-            Optional<WeaponDefinition> definition = WeaponDefinition.CODEC.parse(JsonOps.INSTANCE, model.working(selected)).result();
-            cachedInfo = definition.map(weapon -> {
-                double dps = weapon.dps(WeaponMaterials.IRON);
-                return (Component) Component.translatable(KEY + "info.dps", Docs.number(dps),
-                        Docs.number(WeaponDefinition.VANILLA_IRON_SWORD_DPS), Docs.number(dps / WeaponDefinition.VANILLA_IRON_SWORD_DPS));
-            }).orElse(Component.empty());
+            cachedInfo = Component.translatable(KEY + "info.weapon");
         }
         return cachedInfo;
     }

@@ -77,3 +77,16 @@ dependencies {
     if (project.findProperty('bw_compat') == 'jei') modRuntimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
     if (project.findProperty('bw_compat') == 'emi') modRuntimeOnly "dev.emi:emi-forge:${emi_version}"
 }
+
+// Les tests tournent avec les vraies armes de Better Weaponry : rien de ce mod ne part dans le jar publié.
+// Le jar de "devlibs" garde les noms de développement, le seul que l'environnement de test peut charger.
+def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.20.1/forge/build/devlibs/better_weaponry-3.0.0+1.20.1-forge.jar')
+dependencies {
+    if (betterWeaponryJar.exists()) compileOnly files(betterWeaponryJar)
+}
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    doFirst {
+        copy { from betterWeaponryJar; into rootProject.file('run/gameTestServer/mods') }
+        copy { from rootProject.file('tools/parity/reference-1.20.1.json'); into rootProject.file('run/gameTestServer'); rename { 'parity-reference.json' } }
+    }
+}

@@ -8,10 +8,6 @@ import com.combatreforged.data.DashDefinition;
 import com.combatreforged.data.ParryDefinition;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponMaterials;
-import com.combatreforged.item.WeaponType;
-import com.combatreforged.registry.ModItems;
 import com.combatreforged.tutorial.TutorialScene.ActorKind;
 import com.combatreforged.tutorial.TutorialScene.Hand;
 import net.minecraft.network.chat.Component;
@@ -141,26 +137,10 @@ public final class TutorialScenes {
         return Component.literal("-" + Docs.number(amount));
     }
 
-    private static ItemStack weapon(WeaponType type, WeaponMaterial material) {
-        return new ItemStack(ModItems.get(type, material).get());
-    }
-
-    private static ItemStack iron(WeaponType type) {
-        return weapon(type, WeaponMaterials.IRON);
-    }
-
-    private static double damageOf(WeaponType type, WeaponMaterial material) {
-        return WeaponData.weapon(type).damageFor(material);
-    }
-
-    private static double damageOf(WeaponType type) {
-        return damageOf(type, WeaponMaterials.IRON);
-    }
-
-    private static TutorialScene.Builder duel(String id, ItemStack main, ItemStack off, double distance, ItemStack targetWeapon) {
+    private static TutorialScene.Builder duel(String id, SceneItem main, SceneItem off, double distance, SceneItem targetWeapon) {
         return TutorialScene.builder(id)
                 .actor(PLAYER, ActorKind.PLAYER, 0.0D, 0.0D, 0.0F, main, off)
-                .actor(TARGET, ActorKind.ZOMBIE, 0.0D, distance, 180.0F, targetWeapon, ItemStack.EMPTY);
+                .actor(TARGET, ActorKind.ZOMBIE, 0.0D, distance, 180.0F, targetWeapon, SceneItem.EMPTY);
     }
 
     /** Un coup qui touche : mouvement du bras, flash de la cible, dégâts qui montent. */
@@ -170,28 +150,28 @@ public final class TutorialScenes {
 
     private static TutorialScene twoHanded() {
         String id = "two_handed";
-        double damage = damageOf(WeaponType.CLAYMORE);
-        ItemStack shield = new ItemStack(ModItems.shield(WeaponMaterials.IRON).get());
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.CLAYMORE), ItemStack.EMPTY, 2.4D, ItemStack.EMPTY)
+        double damage = DemoWeapon.CLAYMORE.damage();
+        SceneItem shield = DemoWeapon.IRON_SHIELD;
+        TutorialScene.Builder scene = duel(id, DemoWeapon.CLAYMORE.item(), SceneItem.EMPTY, 2.4D, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(80, caption(id, "locked"))
                 .step(155, caption(id, "one_handed"));
         hit(scene, PLAYER, TARGET, 30, Hand.MAIN, damage);
         scene.equip(PLAYER, 88, true, shield)
                 .labelAt(PLAYER, 0.75D, 1.45D, 0.0D, Component.literal("✖"), RED, 94, 135)
-                .equip(PLAYER, 128, true, ItemStack.EMPTY)
-                .equip(PLAYER, 160, false, iron(WeaponType.BROADSWORD))
+                .equip(PLAYER, 128, true, SceneItem.EMPTY)
+                .equip(PLAYER, 160, false, DemoWeapon.BROADSWORD.item())
                 .equip(PLAYER, 166, true, shield);
-        hit(scene, PLAYER, TARGET, 190, Hand.MAIN, damageOf(WeaponType.BROADSWORD));
+        hit(scene, PLAYER, TARGET, 190, Hand.MAIN, DemoWeapon.BROADSWORD.damage());
         return scene.duration(245).build();
     }
 
     private static TutorialScene dualWield() {
         String id = "dual_wield";
-        double mainDamage = damageOf(WeaponType.DAGGER, WeaponMaterials.IRON);
-        double offDamage = damageOf(WeaponType.DAGGER, WeaponMaterials.DIAMOND);
+        double mainDamage = DemoWeapon.DAGGER.damage();
+        double offDamage = DemoWeapon.DIAMOND_DAGGER_DAMAGE;
         double speed = WeaponData.rules().dualWieldSpeedMultiplier();
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.DAGGER), weapon(WeaponType.DAGGER, WeaponMaterials.DIAMOND), 2.0D, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.DAGGER.item(), DemoWeapon.DIAMOND_DAGGER, 2.0D, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(60, caption(id, "alternate"))
                 .step(160, caption(id, "speed", Docs.number(speed)))
@@ -209,10 +189,10 @@ public final class TutorialScenes {
 
     private static TutorialScene parry() {
         String id = "parry";
-        ParryDefinition parry = WeaponData.weapon(WeaponType.KATANA).parry();
+        ParryDefinition parry = DemoWeapon.KATANA.definition().parry();
         double zombieDamage = 6.0D;
         double reduced = zombieDamage * (1.0D - parry.damageReduction() / PERCENT);
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.KATANA), ItemStack.EMPTY, 2.2D, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.KATANA.item(), SceneItem.EMPTY, 2.2D, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(70, caption(id, "front", Docs.number(parry.damageReduction())))
                 .step(160, caption(id, "behind"))
@@ -227,16 +207,16 @@ public final class TutorialScenes {
 
     private static TutorialScene perfectParry() {
         String id = "perfect_parry";
-        ParryDefinition parry = WeaponData.weapon(WeaponType.KATANA).parry();
+        ParryDefinition parry = DemoWeapon.KATANA.definition().parry();
         int window = (int) Math.round(parry.perfectWindowSeconds() * TICKS_PER_SECOND) * SLOW_MOTION;
         double reduced = 6.0D * (1.0D - parry.damageReduction() / PERCENT);
-        double damage = damageOf(WeaponType.KATANA);
+        double damage = DemoWeapon.KATANA.damage();
 
         int firstGuard = 70;
         int firstHit = firstGuard + window / 2;
         int secondGuard = 165;
         int secondHit = secondGuard + window + 15;
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.KATANA), ItemStack.EMPTY, 2.2D, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.KATANA.item(), SceneItem.EMPTY, 2.2D, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(50, caption(id, "timing", Docs.number(parry.perfectWindowSeconds())))
                 .step(150, caption(id, "late"))
@@ -256,11 +236,11 @@ public final class TutorialScenes {
 
     private static TutorialScene guardBreak() {
         String id = "guard_break";
-        ParryDefinition parry = WeaponData.weapon(WeaponType.KATANA).parry();
+        ParryDefinition parry = DemoWeapon.KATANA.definition().parry();
         double seconds = parry.guardBreakSeconds();
         double reduced = 6.0D * (1.0D - parry.damageReduction() / PERCENT);
         int perfectHit = 195;
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.KATANA), ItemStack.EMPTY, 2.2D, new ItemStack(Items.IRON_AXE))
+        TutorialScene.Builder scene = duel(id, DemoWeapon.KATANA.item(), SceneItem.EMPTY, 2.2D, SceneItem.of(new ItemStack(Items.IRON_AXE)))
                 .step(0, caption(id, "intro"))
                 .step(60, caption(id, "broken", Docs.number(seconds)))
                 .step(170, caption(id, "perfect"))
@@ -278,10 +258,10 @@ public final class TutorialScenes {
 
     private static TutorialScene reach() {
         String id = "reach";
-        double shortReach = WeaponData.weapon(WeaponType.DAGGER).attackReach();
-        double longReach = WeaponData.weapon(WeaponType.SPEAR).attackReach();
+        double shortReach = DemoWeapon.DAGGER.reach();
+        double longReach = DemoWeapon.SPEAR.reach();
         double distance = Math.min(MAX_DISTANCE, (shortReach + longReach) / 2.0D);
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.DAGGER), ItemStack.EMPTY, distance, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.DAGGER.item(), SceneItem.EMPTY, distance, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(65, caption(id, "short", Docs.number(shortReach)))
                 .step(135, caption(id, "long", Docs.number(longReach)))
@@ -291,12 +271,12 @@ public final class TutorialScenes {
                 .label(TARGET, word("distance", Docs.number(distance)), WHITE, 20, 80)
                 .swing(PLAYER, 85, Hand.MAIN)
                 .label(TARGET, word("too_far"), RED, 92, 130)
-                .equip(PLAYER, 142, false, iron(WeaponType.SPEAR))
+                .equip(PLAYER, 142, false, DemoWeapon.SPEAR.item())
                 .zone(PLAYER, longReach, 360.0D, ZONE_GREEN, 142, 220)
-                .equip(TARGET, 225, false, iron(WeaponType.SPEAR))
+                .equip(TARGET, 225, false, DemoWeapon.SPEAR.item())
                 .zone(TARGET, longReach, 360.0D, ZONE_GREEN, 225, 290);
-        hit(scene, PLAYER, TARGET, 170, Hand.MAIN, damageOf(WeaponType.SPEAR));
-        hit(scene, TARGET, PLAYER, 250, Hand.BOTH, damageOf(WeaponType.SPEAR));
+        hit(scene, PLAYER, TARGET, 170, Hand.MAIN, DemoWeapon.SPEAR.damage());
+        hit(scene, TARGET, PLAYER, 250, Hand.BOTH, DemoWeapon.SPEAR.damage());
         return scene.duration(295).build();
     }
 
@@ -307,30 +287,30 @@ public final class TutorialScenes {
     }
 
     private static ComboStep lastStepWithArea(ComboDefinition combo) {
-        ComboStep fallback = new ComboStep(false, 3.5D, 180.0D, 1.0D, 0.0D, 1.0D);
+        ComboStep fallback = new ComboStep(false, 3.5D, 180.0D, 1.0D, 0.0D, 1.0D, com.combatreforged.data.ComboGesture.DEFAULT, com.combatreforged.data.DataField.NONE, com.combatreforged.data.DataField.NONE);
         return combo.steps().stream().filter(ComboStep::hasArea).reduce((first, second) -> second).orElse(fallback);
     }
 
     private static TutorialScene attackZone() {
         String id = "attack_zone";
-        WeaponDefinition scythe = WeaponData.weapon(WeaponType.SCYTHE);
+        WeaponDefinition scythe = DemoWeapon.SCYTHE.definition();
         double radius = scythe.sweep().radius();
-        ComboStep area = lastStepWithArea(WeaponData.weapon(WeaponType.KATANA).combo());
-        double damage = damageOf(WeaponType.SCYTHE);
+        ComboStep area = lastStepWithArea(DemoWeapon.KATANA.definition().combo());
+        double damage = DemoWeapon.SCYTHE.damage();
         double[] near = {1.3D, 3.0D};
         double[] far = {-3.2D, -1.0D};
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.SCYTHE), ItemStack.EMPTY, 2.4D, ItemStack.EMPTY)
-                .actor("near", ActorKind.ZOMBIE, near[0], near[1], 180.0F, ItemStack.EMPTY, ItemStack.EMPTY)
-                .actor("far", ActorKind.ZOMBIE, far[0], far[1], 90.0F, ItemStack.EMPTY, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.SCYTHE.item(), SceneItem.EMPTY, 2.4D, SceneItem.EMPTY)
+                .actor("near", ActorKind.ZOMBIE, near[0], near[1], 180.0F, SceneItem.EMPTY, SceneItem.EMPTY)
+                .actor("far", ActorKind.ZOMBIE, far[0], far[1], 90.0F, SceneItem.EMPTY, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(90, caption(id, "radius", Docs.number(radius)))
                 .step(165, caption(id, "area", Docs.number(area.radius()), Docs.number(area.angle())))
                 .zone(TARGET, radius, 360.0D, ZONE_GREEN, 15, 165);
         hit(scene, PLAYER, TARGET, 45, Hand.MAIN, damage);
         scene.hurt("near", 48, TARGET).riseLabel("near", damage(damage * scythe.sweep().damageRatio() / PERCENT), RED, 48);
-        scene.equip(PLAYER, 172, false, iron(WeaponType.KATANA)).zone(PLAYER, area.radius(), area.angle(), ZONE_GOLD, 175, 262);
+        scene.equip(PLAYER, 172, false, DemoWeapon.KATANA.item()).zone(PLAYER, area.radius(), area.angle(), ZONE_GOLD, 175, 262);
         int areaHit = 215;
-        double areaDamage = damageOf(WeaponType.KATANA) * area.damageMultiplier();
+        double areaDamage = DemoWeapon.KATANA.damage() * area.damageMultiplier();
         hit(scene, PLAYER, TARGET, areaHit, Hand.MAIN, areaDamage);
         if (inSector(near[0], near[1], area.radius(), area.angle())) {
             scene.hurt("near", areaHit + HIT_DELAY, PLAYER).riseLabel("near", damage(areaDamage), RED, areaHit + HIT_DELAY);
@@ -354,11 +334,11 @@ public final class TutorialScenes {
 
     private static TutorialScene armorPenetration() {
         String id = "armor_penetration";
-        WeaponDefinition hammer = WeaponData.weapon(WeaponType.HAMMER);
-        double damage = hammer.damageFor(WeaponMaterials.IRON);
+        WeaponDefinition hammer = DemoWeapon.HAMMER.definition();
+        double damage = DemoWeapon.HAMMER.damage();
         double withoutPenetration = damageThroughArmor(damage, 0.0D);
         double withPenetration = damageThroughArmor(damage, hammer.armorPenetration());
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.HAMMER), ItemStack.EMPTY, 2.8D, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.HAMMER.item(), SceneItem.EMPTY, 2.8D, SceneItem.EMPTY)
                 .armored(TARGET)
                 .step(0, caption(id, "intro", Docs.number(damage)))
                 .step(60, caption(id, "armor", Docs.number(withoutPenetration)))
@@ -373,14 +353,14 @@ public final class TutorialScenes {
 
     private static TutorialScene dash() {
         String id = "dash";
-        DashDefinition rapier = WeaponData.weapon(WeaponType.RAPIER).dash();
-        DashDefinition dagger = WeaponData.weapon(WeaponType.DAGGER).dash();
+        DashDefinition rapier = DemoWeapon.RAPIER.definition().dash();
+        DashDefinition dagger = DemoWeapon.DAGGER.definition().dash();
         double start = -3.0D;
         double end = Math.min(MAX_DISTANCE - 1.0D, start + rapier.distance());
         double side = Math.min(MAX_DISTANCE - 0.5D, dagger.distance());
         TutorialScene.Builder scene = TutorialScene.builder(id)
-                .actor(PLAYER, ActorKind.PLAYER, 0.0D, start, 0.0F, iron(WeaponType.RAPIER), ItemStack.EMPTY)
-                .actor(TARGET, ActorKind.ZOMBIE, 0.0D, 3.2D, 180.0F, ItemStack.EMPTY, ItemStack.EMPTY)
+                .actor(PLAYER, ActorKind.PLAYER, 0.0D, start, 0.0F, DemoWeapon.RAPIER.item(), SceneItem.EMPTY)
+                .actor(TARGET, ActorKind.ZOMBIE, 0.0D, 3.2D, 180.0F, SceneItem.EMPTY, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(100, caption(id, "cooldown", Docs.number(rapier.cooldownSeconds())))
                 .step(185, caption(id, "direction"))
@@ -388,22 +368,22 @@ public final class TutorialScenes {
                 .trail(0.0D, start, 0.0D, end, CYAN, 40, 75)
                 .label(PLAYER, word("distance", Docs.number(rapier.distance())), CYAN, 50, 95)
                 .labelAt(PLAYER, 0.0D, LABEL_HEIGHT, 0.0D, Component.literal(Docs.number(rapier.cooldownSeconds()) + " s"), WHITE, 110, 170)
-                .equip(PLAYER, 192, false, iron(WeaponType.DAGGER))
+                .equip(PLAYER, 192, false, DemoWeapon.DAGGER.item())
                 .turn(PLAYER, 200, 90.0F)
                 .dash(PLAYER, 212, 220, -side, end)
                 .trail(0.0D, end, -side, end, CYAN, 212, 245);
-        hit(scene, PLAYER, TARGET, 75, Hand.MAIN, damageOf(WeaponType.RAPIER));
+        hit(scene, PLAYER, TARGET, 75, Hand.MAIN, DemoWeapon.RAPIER.damage());
         return scene.duration(265).build();
     }
 
     private static TutorialScene combos() {
         String id = "combos";
-        ComboDefinition combo = WeaponData.weapon(WeaponType.KATANA).combo();
+        ComboDefinition combo = DemoWeapon.KATANA.definition().combo();
         ComboStep area = lastStepWithArea(combo);
-        double damage = damageOf(WeaponType.KATANA);
+        double damage = DemoWeapon.KATANA.damage();
         int total = Math.max(1, combo.steps().size());
-        TutorialScene.Builder scene = duel(id, iron(WeaponType.KATANA), ItemStack.EMPTY, 2.2D, ItemStack.EMPTY)
-                .actor("near", ActorKind.ZOMBIE, -1.6D, 2.0D, 180.0F, ItemStack.EMPTY, ItemStack.EMPTY)
+        TutorialScene.Builder scene = duel(id, DemoWeapon.KATANA.item(), SceneItem.EMPTY, 2.2D, SceneItem.EMPTY)
+                .actor("near", ActorKind.ZOMBIE, -1.6D, 2.0D, 180.0F, SceneItem.EMPTY, SceneItem.EMPTY)
                 .step(0, caption(id, "intro"))
                 .step(50, caption(id, "hits"))
                 .step(125, caption(id, "finisher", Docs.number(area.radius()), Docs.number(area.angle())))

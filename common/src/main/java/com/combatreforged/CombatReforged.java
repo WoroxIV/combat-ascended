@@ -4,11 +4,6 @@ import com.combatreforged.combat.ModEnchantments;
 import com.combatreforged.config.ConfigFolder;
 import com.combatreforged.platform.Platform;
 import com.combatreforged.registry.ModAttributes;
-import com.combatreforged.registry.ModCreativeTabs;
-import com.combatreforged.registry.ModEffects;
-import com.combatreforged.registry.ModEntities;
-import com.combatreforged.registry.ModItems;
-import com.combatreforged.registry.ModRecipes;
 import com.combatreforged.registry.ModSounds;
 import com.combatreforged.registry.ModStats;
 import com.mojang.logging.LogUtils;
@@ -35,14 +30,9 @@ public final class CombatReforged {
 
     /** Déclare tout le contenu du mod (objets, sons, effets...). */
     public static void init() {
-        ModItems.init();
-        ModCreativeTabs.init();
         ModStats.init();
-        ModEntities.init();
         ModAttributes.init();
         ModSounds.init();
-        ModRecipes.init();
-        ModEffects.init();
         ModEnchantments.init();
     }
 

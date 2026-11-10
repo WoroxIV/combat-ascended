@@ -6,7 +6,7 @@ import com.combatreforged.platform.Platform;
 import com.combatreforged.CombatReforged;
 import com.combatreforged.data.GearDefinition;
 import com.combatreforged.data.WeaponData;
-import com.combatreforged.entity.ShurikenEntity;
+import com.combatreforged.registry.ModTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -64,7 +64,7 @@ public final class ShieldSystem {
 
         ItemStack shield = player.getUseItem();
         if (!WeaponData.rules().perfectParryActive()) {
-            // Sans parade parfaite (coupée, ou mod de combat installé), Reflective marche sur tout coup bloqué.
+            // Sans parade parfaite, Reflective marche sur tout coup bloqué.
             ModEnchantments.reflect(player, shield, source, damage);
             return false;
         }
@@ -88,7 +88,7 @@ public final class ShieldSystem {
     public static boolean tryReflectArrow(AbstractArrow arrow, Player player) {
         GearDefinition gear = WeaponData.gear();
         // Changer leur propriétaire volerait un trident Loyauté, ou empêcherait le lanceur de récupérer son shuriken.
-        if (arrow instanceof ThrownTrident || (arrow instanceof ShurikenEntity && arrow.pickup == AbstractArrow.Pickup.ALLOWED)) return false;
+        if (arrow instanceof ThrownTrident || (arrow.getType().is(ModTags.NOT_REFLECTED_WHEN_PICKABLE) && arrow.pickup == AbstractArrow.Pickup.ALLOWED)) return false;
         if (!gear.reflectArrows() || !player.isBlocking() || !ParrySystem.isInPerfectWindow(player)
                 || !player.isDamageSourceBlocked(player.damageSources().arrow(arrow, arrow.getOwner()))) return false;
 

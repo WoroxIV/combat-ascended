@@ -3,36 +3,26 @@ package com.combatreforged.compat;
 import com.combatreforged.platform.Platform;
 import net.minecraft.world.entity.Entity;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
- * Better Combat et Epic Fight remplacent le système de combat du jeu (combos, portée, dual wield, deux mains...) :
- * quand l'un d'eux est présent, tous nos systèmes de combat se coupent (voir {@code RulesDefinition}).
- * Les armes elles-mêmes et leurs enchantements restent disponibles.
+ * Better Combat remplace notre portée, notre balayage, nos deux mains et notre dual wield : quand il est là, ces
+ * systèmes se coupent et tout le reste (combos, parades, effets, enchantements, pénétration d'armure) continue.
+ * Epic Fight, lui, ne peut pas être chargé en même temps : le jeu refuse de démarrer.
  */
 public final class CombatCompat {
     public static final String BETTER_COMBAT = "bettercombat";
-    public static final String EPIC_FIGHT = "epicfight";
 
     // Calculé une seule fois, au premier appel (la liste des mods ne change pas en cours de partie).
-    private static final List<String> LOADED = List.of(BETTER_COMBAT, EPIC_FIGHT).stream().filter(Platform.get()::isModLoaded).toList();
+    private static final boolean BETTER_COMBAT_LOADED = Platform.get().isModLoaded(BETTER_COMBAT);
 
-    /** Tests automatiques uniquement : fait comme si un mod de combat était installé. */
+    /** Tests automatiques uniquement : fait comme si Better Combat était installé. */
     private static volatile boolean simulated;
 
     private CombatCompat() {
     }
 
-    /** Vrai si un mod de combat installé remplace nos systèmes. */
-    public static boolean externalCombatMod() {
-        return simulated || !LOADED.isEmpty();
-    }
-
-    /** Nom du mod de combat installé, pour l'afficher au joueur. */
-    public static Optional<String> externalCombatModName() {
-        if (LOADED.isEmpty()) return simulated ? Optional.of("Better Combat") : Optional.empty();
-        return Optional.of(LOADED.get(0).equals(BETTER_COMBAT) ? "Better Combat" : "Epic Fight");
+    /** Vrai si Better Combat gère les systèmes que nous avons en commun. */
+    public static boolean betterCombat() {
+        return simulated || BETTER_COMBAT_LOADED;
     }
 
     /**

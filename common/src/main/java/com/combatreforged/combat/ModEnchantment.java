@@ -1,6 +1,5 @@
 package com.combatreforged.combat;
 
-import com.combatreforged.item.WeaponItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -61,14 +60,11 @@ public final class ModEnchantment extends Enchantment {
         return super.checkCompatibility(other) && !exclusiveWith.contains(BuiltInRegistries.ENCHANTMENT.getKey(other));
     }
 
-    /** Une arme du mod suit sa capacité configurée ; le reste dépend du type d'objet. */
+    /** L'arme telle que configurée décide d'abord ; le reste dépend du type d'objet. */
     @Override
     public boolean canEnchant(ItemStack stack) {
-        if (stack.getItem() instanceof WeaponItem weapon) {
-            Optional<Boolean> byAbility = ModEnchantments.supportedByAbility(weapon.definition(), this);
-            if (byAbility.isPresent()) return byAbility.get();
-        }
-        return accepted.test(stack);
+        Optional<Boolean> byAbility = ModEnchantments.supportedByAbility(stack, this);
+        return byAbility.orElseGet(() -> accepted.test(stack));
     }
 
     /** Méthode de Forge : la table d'enchantement suit les mêmes règles que l'enclume. */

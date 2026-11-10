@@ -1,6 +1,0 @@
-{
-  "parent": "combat_reforged:item/battleaxe_base",
-  "textures": {
-    "layer0": "combat_reforged:item/forgotten_battleaxe"
-  }
-}

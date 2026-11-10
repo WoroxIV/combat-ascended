@@ -1,6 +1,0 @@
-{
-  "parent": "combat_reforged:item/katana_base",
-  "textures": {
-    "layer0": "combat_reforged:item/andesite_alloy_katana"
-  }
-}

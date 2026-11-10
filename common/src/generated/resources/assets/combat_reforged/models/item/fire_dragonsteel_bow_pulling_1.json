@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/bow",
-  "textures": {
-    "layer0": "combat_reforged:item/fire_dragonsteel_bow_pulling_1"
-  }
-}

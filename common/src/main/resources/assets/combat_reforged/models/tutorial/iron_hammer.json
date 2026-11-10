@@ -1,0 +1,6 @@
+{
+  "parent": "combat_reforged:tutorial/hammer_base",
+  "textures": {
+    "layer0": "combat_reforged:item/tutorial/iron_hammer"
+  }
+}

@@ -1,10 +1,10 @@
 package com.combatreforged.combat;
 
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.WeaponShieldItem;
-import com.combatreforged.registry.ModItems;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 /** Recharge d'une capacité (dash, garde brisée), affichée par l'icône vanilla dans la barre d'objets. */
 public final class AbilityCooldowns {
@@ -18,15 +18,14 @@ public final class AbilityCooldowns {
         return Math.max(1, (int) Math.round(seconds * TICKS_PER_SECOND));
     }
 
-    /** La recharge touche tous les matériaux du type : changer d'arme du même type ne permet pas d'y échapper. */
+    /** La recharge touche tous les objets du même profil : changer de matériau ne permet pas d'y échapper. */
     public static void start(Player player, ItemStack stack, double seconds) {
         int ticks = ticks(seconds);
-        if (stack.getItem() instanceof WeaponItem weapon) {
-            ModItems.allOfType(weapon.getType()).forEach(item -> player.getCooldowns().addCooldown(item.get(), ticks));
-        } else if (stack.getItem() instanceof WeaponShieldItem) {
-            ModItems.allShields().forEach(item -> player.getCooldowns().addCooldown(item.get(), ticks));
-        } else {
+        List<Item> shared = WeaponProfiles.id(stack).map(WeaponProfiles::itemsOf).orElse(List.of());
+        if (shared.isEmpty()) {
             player.getCooldowns().addCooldown(stack.getItem(), ticks);
+        } else {
+            shared.forEach(item -> player.getCooldowns().addCooldown(item, ticks));
         }
     }
 }

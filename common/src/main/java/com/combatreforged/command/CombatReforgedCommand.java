@@ -1,32 +1,29 @@
 package com.combatreforged.command;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.combatreforged.platform.Platform;
 import com.combatreforged.CombatReforged;
-import com.combatreforged.config.Docs;
-import com.combatreforged.data.WeaponData;
+import com.combatreforged.combat.WeaponAudit;
 import com.combatreforged.data.WeaponDataLoader;
-import com.combatreforged.data.WeaponDefinition;
 import com.combatreforged.editor.EditorService;
-import com.combatreforged.item.WeaponMaterials;
-import com.combatreforged.item.WeaponType;
 import com.combatreforged.network.OpenEditorPayload;
+import com.combatreforged.platform.Platform;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+
 /**
  * Commande /combatreforged :
  * <ul>
  *   <li>{@code /combatreforged} : l'éditeur pour les opérateurs (et l'hôte d'une partie solo), le Codex pour les autres ;</li>
  *   <li>{@code editor} / {@code codex} : l'un ou l'autre explicitement ;</li>
- *   <li>{@code dps} : dégâts par seconde de chaque arme, comparés à l'épée en fer vanilla ;</li>
- *   <li>{@code reload} : recharge seulement les données des armes (opérateurs).</li>
+ *   <li>{@code scan} : liste chaque arme, son archétype et la raison de ce choix (opérateurs) ;</li>
+ *   <li>{@code reload} : recharge seulement les données de combat (opérateurs).</li>
  * </ul>
  */
 public final class CombatReforgedCommand {
@@ -41,7 +38,9 @@ public final class CombatReforgedCommand {
                 .executes(context -> open(context, null))
                 .then(Commands.literal("editor").executes(context -> open(context, true)))
                 .then(Commands.literal("codex").executes(context -> open(context, false)))
-                .then(Commands.literal("dps").executes(CombatReforgedCommand::dps))
+                .then(Commands.literal("scan")
+                        .requires(source -> source.hasPermission(OPERATOR_LEVEL))
+                        .executes(CombatReforgedCommand::scan))
                 .then(Commands.literal("reload")
                         .requires(source -> source.hasPermission(OPERATOR_LEVEL))
                         .executes(CombatReforgedCommand::reload)));
@@ -59,20 +58,19 @@ public final class CombatReforgedCommand {
         return 1;
     }
 
-    private static int dps(CommandContext<CommandSourceStack> context) {
+    private static int scan(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        source.sendSuccess(() -> Component.translatable(KEY + "dps.header", Docs.number(WeaponDefinition.VANILLA_IRON_SWORD_DPS))
-                .withStyle(ChatFormatting.GOLD), false);
-        for (WeaponType type : WeaponType.values()) {
-            WeaponDefinition definition = WeaponData.weapon(type);
-            double iron = definition.dps(WeaponMaterials.IRON);
-            double netherite = definition.dps(WeaponMaterials.NETHERITE);
-            Component line = Component.translatable(KEY + "dps.line",
-                    Component.translatable(CombatReforged.MODID + ".configuration." + type.id()),
-                    Docs.number(iron), Docs.number(netherite), Docs.number(iron / WeaponDefinition.VANILLA_IRON_SWORD_DPS));
-            source.sendSuccess(() -> line, false);
+        WeaponAudit.Report report = WeaponAudit.run();
+        try {
+            String file = WeaponAudit.export(report);
+            source.sendSuccess(() -> Component.translatable(KEY + "scan.result", report.entries().size(), report.ignored().size(), file), false);
+        } catch (IOException e) {
+            CombatReforged.LOGGER.error("[Combat Reforged] Could not write the scan report", e);
+            source.sendFailure(Component.translatable(KEY + "scan.failed", e.getMessage()));
+            return 0;
         }
-        return WeaponType.values().length;
+        report.bySource().forEach((kind, count) -> source.sendSuccess(() -> Component.translatable(KEY + "scan.line", kind, count), false));
+        return report.entries().size();
     }
 
     private static int reload(CommandContext<CommandSourceStack> context) {

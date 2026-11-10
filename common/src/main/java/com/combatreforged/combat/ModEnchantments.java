@@ -5,8 +5,6 @@ import com.combatreforged.data.RulesDefinition;
 import com.combatreforged.data.WeaponAbility;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.GearWear;
 import com.combatreforged.platform.Platform;
 import com.combatreforged.registry.ModTags;
 import net.minecraft.core.particles.ParticleOptions;
@@ -30,9 +28,7 @@ import net.minecraft.world.entity.monster.CaveSpider;
 import net.minecraft.world.entity.monster.Husk;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -45,29 +41,20 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Les enchantements du mod : coût, niveaux et objets acceptés sont dans {@link #init()},
- * leurs effets sont ici et dans {@link EnchantmentEvents}.
+ * Les enchantements du mod : Reflective, Riposte et Élan, liés à la parade et au dash.
+ * Coût, niveaux et objets acceptés sont dans {@link #init()}.
  */
 public final class ModEnchantments {
     public static final ResourceKey<Enchantment> REFLECTIVE = key("reflective");
-    public static final ResourceKey<Enchantment> VAMPIRISM = key("vampirism");
     public static final ResourceKey<Enchantment> RIPOSTE = key("riposte");
     public static final ResourceKey<Enchantment> MOMENTUM = key("momentum");
-    public static final ResourceKey<Enchantment> EXECUTION = key("execution");
-    public static final ResourceKey<Enchantment> BLEEDING = key("bleeding");
-    public static final ResourceKey<Enchantment> RETURNING = key("returning");
 
-    public static final List<ResourceKey<Enchantment>> ALL = List.of(REFLECTIVE, VAMPIRISM, RIPOSTE, MOMENTUM, EXECUTION, BLEEDING, RETURNING);
+    public static final List<ResourceKey<Enchantment>> ALL = List.of(REFLECTIVE, RIPOSTE, MOMENTUM);
 
     private static final double REFLECT_PER_LEVEL = 0.1D;
-    private static final double VAMPIRISM_PER_LEVEL = 0.1D;
-    /** Plus la valeur est petite, plus le soin plafonne vite sur les gros coups. */
-    private static final double VAMPIRISM_CURVE = 2.0D;
     public static final double RIPOSTE_PERCENT_PER_LEVEL = 25.0D;
     private static final double MOMENTUM_PER_LEVEL = 0.15D;
     private static final double MOMENTUM_MIN_MULTIPLIER = 0.25D;
-    public static final double EXECUTION_PER_LEVEL = 0.1D;
-    public static final double EXECUTION_HEALTH_THRESHOLD = 0.3D;
     /** Recul de base d'un coup renvoyé, comme un coup normal. */
     private static final double REFLECT_KNOCKBACK = 0.4D;
     private static final int REFLECT_POISON_TICKS = 140;
@@ -79,23 +66,16 @@ public final class ModEnchantments {
     private static final EquipmentSlot[] BOTH_HANDS = {EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND};
     private static final ModEnchantment.Costs COMMON_COSTS = new ModEnchantment.Costs(12, 11, 62, 11, 3, false);
     private static final ModEnchantment.Costs TREASURE_COSTS = new ModEnchantment.Costs(25, 25, 75, 25, 3, true);
-    private static final ModEnchantment.Costs RETURNING_COSTS = new ModEnchantment.Costs(20, 0, 50, 0, 1, true);
 
     private ModEnchantments() {
     }
 
     /** Force la déclaration des enchantements. */
     public static void init() {
-        Predicate<ItemStack> sharpWeapons = stack -> stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
         register(REFLECTIVE, Enchantment.Rarity.VERY_RARE, BOTH_HANDS, TREASURE_COSTS,
                 stack -> stack.is(ModTags.ENCHANTABLE_PARRYING) || Platform.get().isShield(stack), Set.of(RIPOSTE.location()));
-        register(VAMPIRISM, Enchantment.Rarity.VERY_RARE, MAIN_HAND, TREASURE_COSTS, sharpWeapons, Set.of(BLEEDING.location()));
         register(RIPOSTE, Enchantment.Rarity.RARE, MAIN_HAND, COMMON_COSTS, stack -> stack.is(ModTags.ENCHANTABLE_PARRY_WEAPONS), Set.of(REFLECTIVE.location()));
         register(MOMENTUM, Enchantment.Rarity.RARE, MAIN_HAND, COMMON_COSTS, stack -> stack.is(ModTags.ENCHANTABLE_DASHING), Set.of());
-        register(EXECUTION, Enchantment.Rarity.RARE, MAIN_HAND, COMMON_COSTS, sharpWeapons, Set.of());
-        register(BLEEDING, Enchantment.Rarity.RARE, MAIN_HAND, COMMON_COSTS, stack -> stack.is(ModTags.ENCHANTABLE_BLEEDING),
-                Set.of(new ResourceLocation("fire_aspect"), VAMPIRISM.location()));
-        register(RETURNING, Enchantment.Rarity.RARE, MAIN_HAND, RETURNING_COSTS, stack -> stack.is(ModTags.SHURIKENS), Set.of(new ResourceLocation("mending")));
     }
 
     private static void register(ResourceKey<Enchantment> key, Enchantment.Rarity rarity, EquipmentSlot[] slots, ModEnchantment.Costs costs,
@@ -107,35 +87,32 @@ public final class ModEnchantments {
         return ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(CombatReforged.MODID, path));
     }
 
-    /** Niveau de cet enchantement sur l'objet, 0 s'il ne l'a pas (ou si un datapack a retiré l'enchantement). */
+    /** Niveau de cet enchantement sur l'objet, 0 s'il ne l'a pas. */
     public static int level(Level level, ItemStack stack, ResourceKey<Enchantment> enchantment) {
         if (stack.isEmpty()) return 0;
         Enchantment value = BuiltInRegistries.ENCHANTMENT.get(enchantment);
         return value == null ? 0 : EnchantmentHelper.getItemEnchantmentLevel(value, stack);
     }
 
-    /**
-     * Enchantements liés à une capacité : c'est l'arme telle que configurée qui décide, pas un tag figé. Donner "parry"
-     * à une arme dans l'éditeur lui ouvre Reflective et Riposte.
-     *
-     * @return vide si l'enchantement ne dépend d'aucune capacité (le tag de l'enchantement décide alors)
-     */
-    public static Optional<Boolean> supportedByAbility(WeaponDefinition definition, Enchantment enchantment) {
+    /** Vrai pour nos trois enchantements : ils suivent la capacité de l'arme. */
+    public static boolean followsAbility(Enchantment enchantment) {
+        return is(enchantment, REFLECTIVE) || is(enchantment, RIPOSTE) || is(enchantment, MOMENTUM);
+    }
+
+    /** Décision d'après la capacité : parade pour Reflective et Riposte, dash pour Élan. Sans profil, le type d'objet décide. */
+    public static Optional<Boolean> supportedByAbility(ItemStack stack, Enchantment enchantment) {
+        Optional<WeaponDefinition> definition = WeaponProfiles.definition(stack);
+        if (definition.isEmpty()) return Optional.empty();
         RulesDefinition rules = WeaponData.rules();
-        boolean parries = definition.ability() == WeaponAbility.PARRY;
+        boolean parries = definition.get().ability() == WeaponAbility.PARRY;
         if (is(enchantment, REFLECTIVE)) return Optional.of(parries && rules.parryActive());
         if (is(enchantment, RIPOSTE)) return Optional.of(parries && rules.perfectParryActive());
-        if (is(enchantment, MOMENTUM)) return Optional.of(definition.ability() == WeaponAbility.DASH && rules.dashActive());
+        if (is(enchantment, MOMENTUM)) return Optional.of(definition.get().ability() == WeaponAbility.DASH && rules.dashActive());
         return Optional.empty();
     }
 
     private static boolean is(Enchantment enchantment, ResourceKey<Enchantment> key) {
         return key.location().equals(BuiltInRegistries.ENCHANTMENT.getKey(enchantment));
-    }
-
-    /** Soin de Vampirisme : proportionnel sur les petits coups, puis logarithmique pour ne pas rendre un joueur intuable. */
-    public static double vampirismHeal(double damage, int level) {
-        return VAMPIRISM_CURVE * Math.log1p(damage * level * VAMPIRISM_PER_LEVEL / VAMPIRISM_CURVE);
     }
 
     /** Borné : un niveau obtenu par commande ou par un mod ne doit pas supprimer la recharge. */
@@ -167,7 +144,7 @@ public final class ModEnchantments {
         ItemStack attackerWeapon = attacker.getMainHandItem();
         DamageSource reflected = defender.damageSources().thorns(defender);
         attacker.hurt(reflected, (float) (damage * enchantmentLevel * REFLECT_PER_LEVEL));
-        WeaponItem.applyOnHitEffects(attackerWeapon, attacker, defender);
+        WeaponActions.applyOnHitEffects(attackerWeapon, attacker, defender);
         GearWear.applyPostAttackEnchantments(defender, attacker, attackerWeapon);
         applyNaturalEffect(attacker, defender);
         pushBack(attacker, defender, REFLECT_KNOCKBACK + attacker.getAttributeValue(Attributes.ATTACK_KNOCKBACK));

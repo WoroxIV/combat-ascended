@@ -1,7 +1,7 @@
 package com.combatreforged.data;
 
 import com.combatreforged.platform.Platform;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.combatreforged.network.WeaponDataSyncPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -28,8 +28,8 @@ public final class WeaponDataEvents {
      */
     public static void onDatapackSync(boolean afterReload, Stream<ServerPlayer> players) {
         players.forEach(player -> {
-            Platform.get().sendToPlayer(player, new WeaponDataSyncPayload(WeaponData.current()));
-            if (afterReload) WeaponItem.refreshEquippedModifiers(player);
+            Platform.get().sendToPlayer(player, WeaponDataSyncPayload.current());
+            if (afterReload) WeaponActions.refreshEquippedModifiers(player);
             if (canSeeProblems(player)) {
                 sendProblems(player, WeaponDataLoader.lastProblems());
             }

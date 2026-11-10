@@ -1,7 +1,6 @@
 package com.combatreforged.mixin;
 
 import net.minecraft.world.item.ItemStack;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.combat.AdoptedItemEvents;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.combatreforged.combat.DualWieldSystem;
@@ -84,7 +83,6 @@ public abstract class LivingEntityMixin {
     private boolean combatreforged$weaponsDisableShields(boolean disables) {
         LivingEntity self = (LivingEntity) (Object) this;
         ItemStack weapon = self.getMainHandItem();
-        if (weapon.getItem() instanceof WeaponItem item) return item.canDisableShield(weapon, self.getUseItem(), self, self);
         return disables || AdoptedItemEvents.disablesShield(weapon, self);
     }
 

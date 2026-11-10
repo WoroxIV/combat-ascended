@@ -1,0 +1,21 @@
+{
+  "parent": "combat_reforged:spear",
+  "reach_bonus": 3.0,
+  "ability": "none",
+  "combo": {
+    "enabled": true,
+    "reset_after_seconds": 2.5,
+    "max_bonus_damage": 12,
+    "steps": [
+      {},
+      {
+        "radius": 5.0,
+        "angle": 30,
+        "damage_multiplier": 1.5,
+        "cooldown_multiplier": 1.5,
+        "gesture": "thrust",
+        "knockback": 1.5
+      }
+    ]
+  }
+}

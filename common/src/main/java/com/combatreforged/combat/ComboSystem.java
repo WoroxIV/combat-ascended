@@ -1,20 +1,23 @@
 package com.combatreforged.combat;
 
-import com.combatreforged.item.GearWear;
 import com.combatreforged.registry.ModAttributes;
 import java.util.UUID;
 import com.combatreforged.platform.Platform;
+import com.combatreforged.api.CombatReforgedApi;
 import com.combatreforged.compat.CombatCompat;
 import com.combatreforged.data.ComboDefinition;
+import com.combatreforged.data.ComboGesture;
 import com.combatreforged.data.ComboStep;
+import com.combatreforged.data.DataField;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.WeaponType;
 import com.combatreforged.network.ComboSyncPayload;
 import com.combatreforged.network.DualSwingPayload;
 import com.combatreforged.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -61,6 +64,7 @@ public final class ComboSystem {
     private static final double KNOCKBACK_PER_LEVEL = 0.5D;
     /** Particules de balayage : une tous les 30° de la zone. */
     private static final double DEGREES_PER_PARTICLE = 30.0D;
+    private static final int STEP_PARTICLES = 8;
 
     private static final UUID DAMAGE_BONUS_ID = ModAttributes.uuid("combo_damage_bonus");
     private static final UUID DAMAGE_MULTIPLIER_ID = ModAttributes.uuid("combo_damage_multiplier");
@@ -73,7 +77,7 @@ public final class ComboSystem {
      * Ce qui va se passer pour un coup : l'étape du combo, si elle compte (coup assez chargé) et si les deux
      * armes frappent. {@code combo == null} : pas de combo pour ce coup.
      */
-    public record Hit(@Nullable ComboDefinition combo, @Nullable WeaponType type, @Nullable ComboStep step, int index,
+    public record Hit(@Nullable ComboDefinition combo, @Nullable ResourceLocation type, @Nullable ComboStep step, int index,
                       boolean counts, boolean bothHands, float strength) {
         static Hit none(float strength) {
             return new Hit(null, null, null, 0, false, false, strength);
@@ -91,7 +95,7 @@ public final class ComboSystem {
 
     // --- Quel combo ---
 
-    /** Combo de cet objet s'il est activé (fichier de l'arme et rules.json). Coupé avec Better Combat et Epic Fight, qui ont les leurs. */
+    /** Combo de cet objet s'il est activé (fichier de l'arme et rules.json). Il continue avec Better Combat, qui ne fait que porter les coups. */
     public static Optional<ComboDefinition> comboOf(ItemStack stack) {
         if (!WeaponData.rules().combosActive()) return Optional.empty();
         return WeaponProfiles.definition(stack).map(WeaponDefinition::combo).filter(combo -> combo.enabled() && !combo.steps().isEmpty());
@@ -106,8 +110,8 @@ public final class ComboSystem {
 
     /** Le joueur tient le même type d'arme dans chaque main, en dual wield (pas d'arme à deux mains). */
     public static boolean holdsPair(Player player) {
-        Optional<WeaponType> main = WeaponProfiles.type(player.getMainHandItem());
-        return main.isPresent() && main.equals(WeaponProfiles.type(player.getOffhandItem())) && DualWieldSystem.isDualWielding(player);
+        Optional<ResourceLocation> main = WeaponProfiles.id(player.getMainHandItem());
+        return main.isPresent() && main.equals(WeaponProfiles.id(player.getOffhandItem())) && DualWieldSystem.holdsDualWeapons(player);
     }
 
     // --- Déroulement d'un coup (PlayerCombatMixin) ---
@@ -118,17 +122,20 @@ public final class ComboSystem {
         Optional<ComboDefinition> active = activeCombo(player);
         if (active.isEmpty()) {
             state.resetCombo();
+            state.gesture = ComboGesture.DEFAULT;
             return Hit.none(strength);
         }
         ComboDefinition combo = active.get();
-        WeaponType type = WeaponProfiles.type(player.getMainHandItem()).orElseThrow();
-        if (state.comboType != type || player.level().getGameTime() > state.comboExpiresAt) state.comboStep = 0;
+        ResourceLocation type = WeaponProfiles.id(player.getMainHandItem()).orElseThrow();
+        if (!type.equals(state.comboType) || player.level().getGameTime() > state.comboExpiresAt) state.comboStep = 0;
         state.comboType = type;
 
         int index = Math.floorMod(state.comboStep, combo.steps().size());
         ComboStep step = combo.steps().get(index);
         boolean counts = strength * PERCENT >= combo.minCharge();
         boolean bothHands = counts && step.bothHands() && holdsPair(player);
+        // Better Combat joue ses propres animations.
+        state.gesture = counts && !CombatCompat.betterCombat() ? step.gesture() : ComboGesture.DEFAULT;
         return new Hit(combo, type, step, index, counts, bothHands, strength);
     }
 
@@ -150,7 +157,7 @@ public final class ComboSystem {
         addTemporaryModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_BONUS_ID,
                 damage - mainDamage, AttributeModifier.Operation.ADDITION, undo);
         addTemporaryModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MULTIPLIER_ID,
-                step.damageMultiplier() - 1.0D, AttributeModifier.Operation.MULTIPLY_TOTAL, undo);
+                cappedMultiplier(hit.combo(), step, damage) - 1.0D, AttributeModifier.Operation.MULTIPLY_TOTAL, undo);
         addTemporaryModifier(player, Attributes.ATTACK_KNOCKBACK, KNOCKBACK_ID,
                 step.knockback(), AttributeModifier.Operation.ADDITION, undo);
 
@@ -158,6 +165,7 @@ public final class ComboSystem {
         try {
             vanillaAttack.run();
             if (state.attackLanded && player.level() instanceof ServerLevel level) {
+                playStepEffects(level, player, step);
                 DamageSource source = player.damageSources().playerAttack(player);
                 if (hit.bothHands() && target instanceof LivingEntity living) applyOffhandWeapon(level, player, living, source);
                 if (step.hasArea()) hitArea(level, player, target, hit, source);
@@ -179,11 +187,13 @@ public final class ComboSystem {
         boolean landed = isCreature(target) && (level.isClientSide || state.attackLanded);
         if (landed) {
             if (hit.counts()) {
+                if (!level.isClientSide) CombatReforgedApi.fireComboHit(player, player.getMainHandItem(), hit.step());
                 state.comboStep = (hit.index() + 1) % hit.combo().steps().size();
                 if (hit.special() && (hit.bothHands() || hit.step().cooldownMultiplier() != 1.0D)) {
                     state.nextAttackDelay = nextAttackDelay(player, hit);
                 }
-                if (hit.bothHands()) {
+                // Better Combat anime lui-même les coups : pas de double mouvement de bras.
+                if (hit.bothHands() && !CombatCompat.betterCombat()) {
                     state.dualSwingPending = true;
                     if (!level.isClientSide) Platform.get().sendToPlayersTracking(player, new DualSwingPayload(player.getId()));
                 }
@@ -208,7 +218,7 @@ public final class ComboSystem {
     /** Recharge imposée par le dernier coup spécial, si le joueur tient toujours cette arme. */
     @Nullable
     public static Float attackDelayOverride(Player player, PlayerCombatState state) {
-        if (state.nextAttackDelay <= 0.0F || WeaponProfiles.type(player.getMainHandItem()).orElse(null) != state.comboType) return null;
+        if (state.nextAttackDelay <= 0.0F || !WeaponProfiles.id(player.getMainHandItem()).equals(Optional.ofNullable(state.comboType))) return null;
         return state.nextAttackDelay;
     }
 
@@ -216,6 +226,11 @@ public final class ComboSystem {
     public static boolean isAreaAttackInProgress(Player player) {
         ComboStep step = PlayerCombatState.of(player).activeStep;
         return step != null && step.hasArea();
+    }
+
+    /** Geste à jouer pour ce joueur pendant son coup de bras en cours. */
+    public static ComboGesture gestureOf(Player player) {
+        return player.swinging ? PlayerCombatState.of(player).gesture : ComboGesture.DEFAULT;
     }
 
     /** Le coup de bras en cours anime les deux bras (coup à deux armes). */
@@ -229,7 +244,7 @@ public final class ComboSystem {
         PlayerCombatState state = PlayerCombatState.of(player);
         Optional<ComboDefinition> combo = activeCombo(player);
         if (combo.isEmpty() || state.comboStep <= 0 || player.level().getGameTime() > state.comboExpiresAt) return null;
-        if (WeaponProfiles.type(player.getMainHandItem()).orElse(null) != state.comboType) return null;
+        if (!WeaponProfiles.id(player.getMainHandItem()).equals(Optional.ofNullable(state.comboType))) return null;
         List<ComboStep> steps = combo.get().steps();
         int done = Math.floorMod(state.comboStep, steps.size());
         return new Progress(steps.size(), done, steps.get(done).isSpecial());
@@ -250,6 +265,7 @@ public final class ComboSystem {
         float charge = 0.2F + strength * strength * 0.8F;
         ItemStack weapon = player.getMainHandItem();
 
+        PlayerCombatState state = PlayerCombatState.of(player);
         for (LivingEntity victim : areaTargets(player, primary, step)) {
             float enchanted = base + EnchantmentHelper.getDamageBonus(weapon, victim.getMobType());
             float amount = base * charge + (enchanted - base) * strength;
@@ -257,9 +273,10 @@ public final class ComboSystem {
                 victim.knockback(step.knockback() * KNOCKBACK_PER_LEVEL, player.getX() - victim.getX(), player.getZ() - victim.getZ());
             }
             if (victim.hurt(source, amount)) {
+                state.swingVictims.add(victim.getId());
                 EnchantmentHelper.doPostHurtEffects(victim, player);
                 GearWear.applyPostAttackEnchantments(player, victim, weapon);
-                WeaponItem.applyOnHitEffects(weapon, victim, player);
+                WeaponActions.applyOnHitEffects(weapon, victim, player);
                 if (hit.bothHands()) applyOffhandWeapon(level, player, victim, source);
             }
         }
@@ -269,7 +286,7 @@ public final class ComboSystem {
 
     /** Créatures dans la zone : à moins de radius blocs, dans l'angle devant le joueur, et qu'on a le droit de frapper. */
     private static List<LivingEntity> areaTargets(Player player, @Nullable Entity primary, ComboStep step) {
-        double radius = step.radius();
+        double radius = effectiveRadius(player, step);
         Vec3 facing = horizontalFacing(player);
         double minDot = Math.cos(Math.toRadians(step.angle() / 2.0D));
         AABB zone = player.getBoundingBox().inflate(radius, AREA_HEIGHT, radius);
@@ -316,7 +333,7 @@ public final class ComboSystem {
     /** Effets à l'impact et effets d'enchantement (Aura de feu...) de l'arme secondaire, pour un coup à deux armes. */
     private static void applyOffhandWeapon(ServerLevel level, Player player, LivingEntity victim, DamageSource source) {
         ItemStack offhand = player.getOffhandItem();
-        WeaponItem.applyOnHitEffects(offhand, victim, player);
+        WeaponActions.applyOnHitEffects(offhand, victim, player);
         GearWear.applyPostAttackEnchantments(player, victim, offhand);
     }
 
@@ -338,6 +355,12 @@ public final class ComboSystem {
         return (float) (base * hit.step().cooldownMultiplier());
     }
 
+    /** Côté client, avec Better Combat : le serveur annonce où en est le combo. */
+    public static void onServerAdvance(Player player, PlayerCombatState state) {
+        activeCombo(player).filter(combo -> combo.steps().get(Math.floorMod(state.comboStep, combo.steps().size())).isSpecial())
+                .ifPresent(combo -> comboReadyFeedback(player));
+    }
+
     /** Côté client : le prochain coup est le coup spécial. Petit son et étincelles devant le joueur. */
     private static void comboReadyFeedback(Player player) {
         Level level = player.level();
@@ -349,6 +372,31 @@ public final class ComboSystem {
                     front.y + (player.getRandom().nextDouble() - 0.5D) * 0.5D,
                     front.z + (player.getRandom().nextDouble() - 0.5D) * 0.5D,
                     0.0D, 0.05D, 0.0D);
+        }
+    }
+
+    /** La zone d'un objet détecté automatiquement ne dépasse pas sa portée ; un fichier d'arme, lui, décide librement. */
+    private static double effectiveRadius(Player player, ComboStep step) {
+        boolean detected = WeaponProfiles.of(player.getMainHandItem()).map(WeaponProfiles.Profile::detected).orElse(false);
+        return detected ? Math.min(step.radius(), Platform.get().entityReach(player)) : step.radius();
+    }
+
+    /** Multiplicateur de ce coup, limité par {@code max_bonus_damage} : les armes très fortes ne font pas un coup spécial démesuré. */
+    private static double cappedMultiplier(ComboDefinition combo, ComboStep step, double damage) {
+        double multiplier = step.damageMultiplier();
+        if (combo.maxBonusDamage() <= 0.0D || multiplier <= 1.0D || damage <= 0.0D) return multiplier;
+        return Math.min(multiplier, 1.0D + combo.maxBonusDamage() / damage);
+    }
+
+    /** Son et particules propres à ce coup, s'il en a. */
+    private static void playStepEffects(ServerLevel level, Player player, ComboStep step) {
+        if (!step.sound().equals(DataField.NONE)) {
+            BuiltInRegistries.SOUND_EVENT.getOptional(step.sound()).ifPresent(sound ->
+                    level.playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1.0F, 1.0F));
+        }
+        if (!step.particles().equals(DataField.NONE) && BuiltInRegistries.PARTICLE_TYPE.get(step.particles()) instanceof SimpleParticleType particle) {
+            Vec3 front = player.getEyePosition().add(player.getLookAngle().scale(1.2D)).add(0.0D, -0.3D, 0.0D);
+            level.sendParticles(particle, front.x, front.y, front.z, STEP_PARTICLES, 0.3D, 0.3D, 0.3D, 0.05D);
         }
     }
 

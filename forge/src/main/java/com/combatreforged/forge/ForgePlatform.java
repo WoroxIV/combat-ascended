@@ -1,11 +1,6 @@
 package com.combatreforged.forge;
 
 import com.combatreforged.CombatReforged;
-import com.combatreforged.config.LegacyConfigMigration;
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponShieldItem;
-import com.combatreforged.item.WeaponType;
 import com.combatreforged.network.Payload;
 import com.combatreforged.platform.Platform;
 import com.combatreforged.platform.Registered;
@@ -18,7 +13,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.common.ForgeMod;
@@ -160,19 +154,6 @@ final class ForgePlatform implements Platform {
         return FakePlayerFactory.getMinecraft(level);
     }
 
-    @Override
-    public void migrateLegacyConfig() {
-        LegacyConfigMigration.migrateClientConfig();
-        LegacyConfigMigration.migrateIfPresent();
-    }
 
-    @Override
-    public WeaponItem createWeapon(WeaponType type, WeaponMaterial material, Item.Properties properties) {
-        return new ForgeWeaponItem(type, material, properties);
-    }
 
-    @Override
-    public WeaponShieldItem createShield(WeaponMaterial material, Item.Properties properties) {
-        return new ForgeShieldItem(material, properties);
-    }
 }

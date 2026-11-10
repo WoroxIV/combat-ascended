@@ -1,14 +1,13 @@
 package com.combatreforged.combat;
 
-import com.combatreforged.item.GearWear;
 import com.combatreforged.platform.IncomingDamage;
 import com.combatreforged.CombatReforged;
+import com.combatreforged.api.CombatReforgedApi;
 import com.combatreforged.compat.CombatCompat;
 import com.combatreforged.data.ParryDefinition;
 import com.combatreforged.data.WeaponAbility;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.registry.ModSounds;
 import com.combatreforged.registry.ModStats;
 import net.minecraft.core.particles.ParticleOptions;
@@ -39,7 +38,7 @@ import java.util.Optional;
  *   <li>au tout début de la parade, un coup est bloqué en entier (parade parfaite) ;</li>
  *   <li>une arme qui désactive les boucliers brise la garde : parade impossible pendant un moment.</li>
  * </ul>
- * Le démarrage est dans {@link WeaponItem#use}, la pose de l'arme dans {@code client.WeaponClientExtensions}.
+ * Le démarrage est dans {@link AdoptedItemEvents}, la pose de l'arme dans {@code client.WeaponClientExtensions}.
  */
 public final class ParrySystem {
     /** Durée d'utilisation "sans fin", comme le bouclier : la parade dure tant que le clic droit est maintenu. */
@@ -72,9 +71,10 @@ public final class ParrySystem {
         Optional<ParryDefinition> parry = parryOf(stack);
         // La recharge vient d'une garde brisée.
         if (parry.isEmpty() || player.getCooldowns().isOnCooldown(stack.getItem())) return false;
-        if (WeaponItem.isTwoHanded(stack)) return true;
+        // Le fichier de l'arme décide, même quand Better Combat gère le verrouillage de la main.
+        if (WeaponActions.isTwoHanded(stack) || (CombatCompat.betterCombat() && WeaponActions.isDeclaredTwoHanded(stack))) return true;
 
-        return player.getOffhandItem().isEmpty() || DualWieldSystem.isDualWielding(player);
+        return player.getOffhandItem().isEmpty() || DualWieldSystem.holdsDualWeapons(player);
     }
 
     /** Vrai si le joueur pare en ce moment. Les conditions sont revérifiées (main secondaire changée entre-temps...). */
@@ -89,7 +89,7 @@ public final class ParrySystem {
      * les deux armes prennent alors la pose de parade (première et troisième personne).
      */
     public static boolean isParryingWithBothHands(Player player) {
-        return isParrying(player) && DualWieldSystem.isDualWielding(player);
+        return isParrying(player) && DualWieldSystem.holdsDualWeapons(player);
     }
 
     /**
@@ -171,8 +171,8 @@ public final class ParrySystem {
 
     /** Use l'arme qui pare. Avec une arme dans chaque main, l'usure est partagée : l'arme principale prend le point impair. */
     private static void wearGuard(Player player, ItemStack weapon, int cost) {
-        if (cost <= 0) return;
-        int offhandCost = DualWieldSystem.isDualWielding(player) ? cost / 2 : 0;
+        if (cost <= 0 || !weapon.isDamageableItem()) return;
+        int offhandCost = DualWieldSystem.holdsDualWeapons(player) ? cost / 2 : 0;
         GearWear.hurt(weapon, cost - offhandCost, player, EquipmentSlot.MAINHAND);
         if (offhandCost > 0) GearWear.hurt(player.getOffhandItem(), offhandCost, player, EquipmentSlot.OFFHAND);
     }
@@ -189,6 +189,7 @@ public final class ParrySystem {
         int riposte = ModEnchantments.level(player.level(), guard, ModEnchantments.RIPOSTE);
         grantPerfectBonus(player, bonusPercent + riposte * ModEnchantments.RIPOSTE_PERCENT_PER_LEVEL, bonusSeconds);
         ModEnchantments.reflect(player, guard, source, damage);
+        CombatReforgedApi.firePerfectParry(player, guard);
     }
 
     /** Après une parade parfaite, le prochain coup porté dans le temps imparti fait plus de dégâts. */

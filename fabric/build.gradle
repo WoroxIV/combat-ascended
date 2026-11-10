@@ -167,3 +167,17 @@ tasks.register('runProductionClient', net.fabricmc.loom.task.prod.ClientProducti
     mods.from(tasks.named('remapJar'))
     mods.from(configurations.productionRuntimeMods)
 }
+
+// Les tests tournent avec les vraies armes de Better Weaponry : rien de ce mod ne part dans le jar publié.
+def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.20.1/fabric/build/libs/better_weaponry-3.0.0+1.20.1-fabric.jar')
+dependencies {
+    if (betterWeaponryJar.exists()) {
+        modCompileOnly files(betterWeaponryJar)
+        modLocalRuntime files(betterWeaponryJar)
+    }
+}
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    doFirst {
+        copy { from rootProject.file('tools/parity/reference-1.20.1.json'); into rootProject.file('run/fabric-gametest'); rename { 'parity-reference.json' } }
+    }
+}

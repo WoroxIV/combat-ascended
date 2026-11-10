@@ -2,34 +2,27 @@ package com.combatreforged.forge;
 
 import com.combatreforged.combat.AdoptedItemEvents;
 import com.combatreforged.combat.CombatEvents;
-import com.combatreforged.combat.EnchantmentEvents;
+import com.combatreforged.combat.MobCombat;
+import com.combatreforged.data.WeaponData;
 import com.combatreforged.combat.ShieldSystem;
 import com.combatreforged.combat.TwoHandedSystem;
 import com.combatreforged.command.CombatReforgedCommand;
-import com.combatreforged.config.LegacyConfigMigration;
 import com.combatreforged.data.WeaponDataEvents;
 import com.combatreforged.data.WeaponDataLoader;
-import com.combatreforged.editor.EditorService;
-import com.combatreforged.event.VanillaGearEvents;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.village.VillagerTradesEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.stream.Stream;
@@ -40,12 +33,6 @@ public final class ForgeGameEvents {
     }
 
     // --- Combat ---
-
-    /** En dernier : le montant final, une fois tous les autres mods passés. */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onDamageDealt(LivingDamageEvent event) {
-        EnchantmentEvents.onDamageDealt(event.getEntity(), event.getSource(), event.getAmount());
-    }
 
     @SubscribeEvent
     public static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
@@ -108,19 +95,10 @@ public final class ForgeGameEvents {
 
     // --- Monde ---
 
-    @SubscribeEvent
-    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        VanillaGearEvents.onLogin(event.getEntity());
-    }
-
-    @SubscribeEvent
-    public static void onVillagerTrades(VillagerTradesEvent event) {
-        VanillaGearEvents.onVillagerTrades(event.getType(), event.getTrades());
-    }
-
+    /** Les mobs reçoivent leurs comportements de garde à chaque arrivée dans le monde. */
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event) {
-        VanillaGearEvents.onEntityJoin(event.getEntity(), event.loadedFromDisk());
+        if (!event.getLevel().isClientSide() && event.getEntity() instanceof Mob mob && WeaponData.rules().mobBehaviorsActive()) MobCombat.addGoals(mob);
     }
 
     // --- Données et commandes ---
@@ -134,13 +112,6 @@ public final class ForgeGameEvents {
     public static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         WeaponDataEvents.onDatapackSync(player == null, player != null ? Stream.of(player) : event.getPlayerList().getPlayers().stream());
-    }
-
-    /** Reprend les réglages 1.x propres à ce monde. Après le démarrage : les datapacks sont déjà chargés avant ServerAboutToStart. */
-    @SubscribeEvent
-    public static void onServerStarted(ServerStartedEvent event) {
-        MinecraftServer server = event.getServer();
-        if (LegacyConfigMigration.migrateWorld(server.getWorldPath(LevelResource.ROOT))) EditorService.enableEditorPack(server);
     }
 
     @SubscribeEvent

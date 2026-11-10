@@ -2,7 +2,6 @@ package com.combatreforged.tutorial;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public final class TutorialScene {
 
     /** État d'un personnage à un instant donné. */
     public record ActorPose(double x, double z, float yaw, float walkPhase, float walkAmount, float mainSwing, float offSwing,
-                            boolean guardMain, boolean guardOff, float hurt, ItemStack mainHand, ItemStack offHand) {
+                            boolean guardMain, boolean guardOff, float hurt, SceneItem mainHand, SceneItem offHand) {
     }
 
     private record Move(int from, int to, double x, double z, boolean dash) {
@@ -82,7 +81,7 @@ public final class TutorialScene {
     private record Hurt(int tick, @Nullable String source) {
     }
 
-    private record Equip(int tick, boolean offHand, ItemStack stack) {
+    private record Equip(int tick, boolean offHand, SceneItem stack) {
     }
 
     /** Un personnage de la scène et son emploi du temps. */
@@ -92,8 +91,8 @@ public final class TutorialScene {
         private final double startX;
         private final double startZ;
         private final float startYaw;
-        private final ItemStack startMain;
-        private final ItemStack startOff;
+        private final SceneItem startMain;
+        private final SceneItem startOff;
         private boolean armored;
         private final List<Move> moves = new ArrayList<>();
         private final List<Turn> turns = new ArrayList<>();
@@ -102,7 +101,7 @@ public final class TutorialScene {
         private final List<Hurt> hurts = new ArrayList<>();
         private final List<Equip> equips = new ArrayList<>();
 
-        private Actor(String id, ActorKind kind, double x, double z, float yaw, ItemStack main, ItemStack off) {
+        private Actor(String id, ActorKind kind, double x, double z, float yaw, SceneItem main, SceneItem off) {
             this.id = id;
             this.kind = kind;
             this.startX = x;
@@ -272,8 +271,8 @@ public final class TutorialScene {
             guardOff |= guard.hand != Hand.MAIN;
         }
 
-        ItemStack main = actor.startMain;
-        ItemStack off = actor.startOff;
+        SceneItem main = actor.startMain;
+        SceneItem off = actor.startOff;
         for (Equip equip : actor.equips) {
             if (tick < equip.tick) continue;
             if (equip.offHand) off = equip.stack;
@@ -298,7 +297,7 @@ public final class TutorialScene {
             this.id = id;
         }
 
-        public Builder actor(String actorId, ActorKind kind, double x, double z, float yaw, ItemStack main, ItemStack off) {
+        public Builder actor(String actorId, ActorKind kind, double x, double z, float yaw, SceneItem main, SceneItem off) {
             actors.put(actorId, new Actor(actorId, kind, x, z, yaw, main, off));
             return this;
         }
@@ -348,7 +347,7 @@ public final class TutorialScene {
             return this;
         }
 
-        public Builder equip(String actorId, int tick, boolean offHand, ItemStack stack) {
+        public Builder equip(String actorId, int tick, boolean offHand, SceneItem stack) {
             actors.get(actorId).equips.add(new Equip(tick, offHand, stack));
             return this;
         }

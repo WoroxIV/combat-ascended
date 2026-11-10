@@ -33,6 +33,9 @@ public final class DataField<T> {
     /** Nature du champ, utilisée pour le schéma JSON et le README. */
     public enum Kind { NUMBER, INTEGER, BOOLEAN, CHOICE, NUMBER_MAP, ID, ITEM_LIST, OBJECT, OBJECT_LIST }
 
+    /** Valeur d'un identifiant facultatif qui n'est pas renseigné. */
+    public static final ResourceLocation NONE = new ResourceLocation("combat_reforged", "none");
+
     private final String name;
     private final Kind kind;
     private final Codec<T> codec;
@@ -111,6 +114,21 @@ public final class DataField<T> {
                 ? DataResult.success(id)
                 : DataResult.error(() -> "unknown " + what + " \"" + id + "\""));
         return new DataField<>(name, Kind.ID, codec, null, 0, 0, null, knownIds, List.of(examples));
+    }
+
+    /**
+     * Identifiant facultatif : {@link #NONE} tant qu'il n'est pas écrit.
+     *
+     * @param knownIds identifiants acceptés, ou null pour accepter tout identifiant bien formé
+     * @param examples valeurs typiques citées dans la documentation
+     */
+    public static DataField<ResourceLocation> optionalId(String name, String what, @Nullable Supplier<Collection<ResourceLocation>> knownIds,
+                                                         String... examples) {
+        java.util.function.Function<ResourceLocation, DataResult<ResourceLocation>> check = id -> id.equals(NONE) || knownIds.get().contains(id)
+                ? DataResult.success(id)
+                : DataResult.error(() -> "unknown " + what + " \"" + id + "\"");
+        Codec<ResourceLocation> codec = knownIds == null ? ResourceLocation.CODEC : ResourceLocation.CODEC.flatXmap(check, check);
+        return new DataField<>(name, Kind.ID, codec, NONE, 0, 0, null, knownIds, List.of(examples));
     }
 
     /**

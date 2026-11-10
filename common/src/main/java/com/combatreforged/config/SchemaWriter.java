@@ -2,8 +2,6 @@ package com.combatreforged.config;
 
 import com.combatreforged.data.DataField;
 import com.combatreforged.data.FieldSet;
-import com.combatreforged.item.WeaponMaterial;
-import com.combatreforged.item.WeaponMaterials;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
@@ -71,10 +69,6 @@ final class SchemaWriter {
             }
             case NUMBER_MAP -> {
                 JsonObject map = typed("object");
-                // Les matériaux connus sont proposés par l'autocomplétion ; les autres restent acceptés.
-                JsonObject materials = new JsonObject();
-                for (WeaponMaterial material : WeaponMaterials.all()) materials.add(material.id(), numberSchema(field, "number"));
-                map.add("properties", materials);
                 map.add("additionalProperties", numberSchema(field, "number"));
                 yield map;
             }

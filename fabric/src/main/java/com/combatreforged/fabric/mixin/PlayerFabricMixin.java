@@ -1,17 +1,14 @@
 package com.combatreforged.fabric.mixin;
 
 import com.combatreforged.combat.CombatEvents;
-import com.combatreforged.combat.EnchantmentEvents;
 import com.combatreforged.combat.TwoHandedSystem;
 import com.combatreforged.combat.WeaponProfiles;
 import com.combatreforged.data.WeaponData;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.combatreforged.platform.Platform;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.world.damagesource.CombatTracker;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -29,13 +26,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Player.class)
 public abstract class PlayerFabricMixin {
 
-    /** Les dégâts finaux reçus par un joueur, une fois l'armure et l'absorption comptées. */
-    @WrapOperation(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;recordDamage(Lnet/minecraft/world/damagesource/DamageSource;F)V"))
-    private void combatreforged$damageDealt(CombatTracker tracker, DamageSource source, float damage, Operation<Void> original) {
-        original.call(tracker, source, damage);
-        EnchantmentEvents.onDamageDealt((Player) (Object) this, source, damage);
-    }
-
     /** Armes sans coup balayé, et coup spécial en zone qui remplace le balayage. */
     @WrapOperation(method = "attack", constant = @Constant(classValue = SwordItem.class))
     private boolean combatreforged$mayNotSweep(Object item, Operation<Boolean> original) {
@@ -47,8 +37,7 @@ public abstract class PlayerFabricMixin {
     private AABB combatreforged$sweepZone(AABB box, double x, double y, double z, Operation<AABB> original, @Local(argsOnly = true) Entity target) {
         Player player = (Player) (Object) this;
         ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof WeaponItem weapon) return weapon.getSweepHitBox(stack, player, target);
-        if (WeaponData.rules().sweepActive() && WeaponProfiles.isAdopted(stack)) return WeaponItem.sweepZone(WeaponProfiles.definition(stack).orElseThrow(), target);
+        if (WeaponData.rules().sweepActive() && WeaponProfiles.isAdopted(stack)) return WeaponActions.sweepZone(WeaponProfiles.definition(stack).orElseThrow(), target);
         return original.call(box, x, y, z);
     }
 

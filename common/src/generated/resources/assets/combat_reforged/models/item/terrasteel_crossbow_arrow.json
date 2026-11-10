@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/crossbow",
-  "textures": {
-    "layer0": "combat_reforged:item/terrasteel_crossbow_arrow"
-  }
-}

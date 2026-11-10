@@ -2,7 +2,6 @@ package com.combatreforged.forge;
 
 import com.combatreforged.client.AttackZoneRenderer;
 import com.combatreforged.client.DualParryHandRenderer;
-import com.combatreforged.client.RangedWeaponClient;
 import com.combatreforged.client.tutorial.TutorialHintTracker;
 import com.combatreforged.combat.TwoHandedSystem;
 import com.combatreforged.data.WeaponData;
@@ -12,7 +11,6 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -36,11 +34,6 @@ public final class ForgeClientEvents {
         if (DualParryHandRenderer.render(event.getHand(), event.getItemStack(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight(), event.getEquipProgress(), false)) {
             event.setCanceled(true);
         }
-    }
-
-    @SubscribeEvent
-    public static void onComputeFov(ComputeFovModifierEvent event) {
-        event.setNewFovModifier(RangedWeaponClient.modifyFov(event.getPlayer(), event.getNewFovModifier()));
     }
 
     @SubscribeEvent

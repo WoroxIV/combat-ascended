@@ -2,7 +2,7 @@ package com.combatreforged.mixin;
 
 import com.combatreforged.combat.ParrySystem;
 import com.combatreforged.combat.WeaponProfiles;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Comportements d'arme des objets adoptés par un fichier d'arme (champ "items") : ce que
- * {@link WeaponItem} fait lui-même pour les armes du mod, sans pouvoir modifier la classe d'un objet vanilla.
+ * une arme pourrait faire elle-même, sans pouvoir modifier la classe d'un objet vanilla.
  */
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
@@ -32,11 +32,11 @@ public abstract class ItemStackMixin {
         if (combatreforged$adoptedParry()) cir.setReturnValue(ParrySystem.USE_DURATION);
     }
 
-    /** Effets à l'impact, appliqués au moment où le jeu compte le coup sur l'objet (comme {@link WeaponItem#hurtEnemy}). */
+    /** Effets à l'impact, appliqués au moment où le jeu compte le coup sur l'objet (comme le ferait la méthode hurtEnemy de l'arme). */
     @Inject(method = "hurtEnemy", at = @At("HEAD"))
     private void combatreforged$onHitEffects(LivingEntity target, Player attacker, CallbackInfo ci) {
         ItemStack stack = (ItemStack) (Object) this;
-        if (WeaponProfiles.isAdopted(stack)) WeaponItem.applyOnHitEffects(stack, target, attacker);
+        if (WeaponProfiles.isAdopted(stack)) WeaponActions.applyOnHitEffects(stack, target, attacker);
     }
 
     private boolean combatreforged$adoptedParry() {

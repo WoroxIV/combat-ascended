@@ -1,21 +1,16 @@
 package com.combatreforged.forge;
 
 import com.combatreforged.CombatReforged;
+import com.combatreforged.client.tutorial.TutorialRendering;
+import com.combatreforged.tutorial.DemoWeapon;
 import com.combatreforged.client.CombatHud;
 import com.combatreforged.client.ModKeyMappings;
-import com.combatreforged.client.RangedWeaponClient;
-import com.combatreforged.client.ShurikenRenderer;
-import com.combatreforged.client.WeaponPaletteSource;
 import com.combatreforged.client.editor.ClientEditorHooks;
 import com.combatreforged.client.editor.WeaponEditorScreen;
 import com.combatreforged.editor.EditorHooks;
-import com.combatreforged.registry.ModEntities;
-import com.combatreforged.registry.ModItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
@@ -23,7 +18,6 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 /** Partie cliente du point d'entrée Forge (jamais chargée sur un serveur dédié). */
 final class CombatReforgedForgeClient {
@@ -38,29 +32,17 @@ final class CombatReforgedForgeClient {
         EditorHooks.setClient(new ClientEditorHooks());
         // Le README et les schémas du dossier de config sont écrits dans la langue du jeu.
         CombatReforged.setLanguageSupplier(CombatReforgedForgeClient::gameLanguage);
-        // Le type de source de textures doit exister avant le premier chargement des atlas.
-        CombatReforged.LOGGER.debug("Texture source {}", WeaponPaletteSource.TYPE);
+        // Les modèles des armes de démonstration des tutoriels, chargés sans objet associé.
+        TutorialRendering.setModelLookup(id -> Minecraft.getInstance().getModelManager().getModel(id));
 
         modEventBus.addListener(CombatReforgedForgeClient::registerGuiOverlays);
-        modEventBus.addListener(CombatReforgedForgeClient::registerRenderers);
+        modEventBus.addListener(CombatReforgedForgeClient::registerModels);
         modEventBus.addListener(CombatReforgedForgeClient::registerKeyMappings);
-        modEventBus.addListener(CombatReforgedForgeClient::clientSetup);
-        modEventBus.register(ForgeClientModEvents.class);
         MinecraftForge.EVENT_BUS.register(ForgeClientEvents.class);
     }
 
-    private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.SHURIKEN.get(), ShurikenRenderer::new);
-    }
-
-    /** La pose "bouclier levé" est un modèle différent, choisi par cette propriété (comme pour le bouclier vanilla). */
-    private static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            ModItems.allShields().forEach(shield -> ItemProperties.register(shield.get(),
-                    new ResourceLocation("blocking"),
-                    (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
-            RangedWeaponClient.registerItemProperties();
-        });
+    private static void registerModels(ModelEvent.RegisterAdditional event) {
+        DemoWeapon.allModels().forEach(event::register);
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {

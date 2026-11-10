@@ -10,7 +10,7 @@ import com.combatreforged.data.JsonUtil;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDataEvents;
 import com.combatreforged.data.WeaponDataLoader;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.combatreforged.network.EditorResultPayload;
 import com.combatreforged.network.WeaponDataSyncPayload;
 import com.google.gson.JsonElement;
@@ -135,7 +135,7 @@ public final class EditorService {
 
     private static JsonObject layer(MinecraftServer server, EditorDocument document, WeaponDataLoader.Base base) {
         return JsonTree.expand(document.fields(), WeaponDataLoader.mergedJson(server.getResourceManager(),
-                document.fields(), document.relativePath(), document.configFile(), base));
+                document.fields(), document.namespace(), document.relativePath(), document.configFile(), base));
     }
 
     /**
@@ -176,10 +176,10 @@ public final class EditorService {
     public static WeaponDataLoader.Result reloadWeaponData(MinecraftServer server) {
         WeaponDataLoader.Result result = WeaponDataLoader.load(server.getResourceManager());
         WeaponDataLoader.install(result);
-        WeaponDataSyncPayload payload = new WeaponDataSyncPayload(WeaponData.current());
+        WeaponDataSyncPayload payload = WeaponDataSyncPayload.current();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             Platform.get().sendToPlayer(player, payload);
-            WeaponItem.refreshEquippedModifiers(player);
+            WeaponActions.refreshEquippedModifiers(player);
             if (WeaponDataEvents.canSeeProblems(player)) WeaponDataEvents.sendProblems(player, result.problems());
         }
         return result;

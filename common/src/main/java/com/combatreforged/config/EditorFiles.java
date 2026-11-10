@@ -1,6 +1,5 @@
 package com.combatreforged.config;
 
-import com.combatreforged.CombatReforged;
 import com.combatreforged.data.WeaponDataLoader;
 import com.combatreforged.editor.EditorDocument;
 import com.google.gson.JsonObject;
@@ -41,7 +40,7 @@ public final class EditorFiles {
         Path metadata = pack.resolve("pack.mcmeta");
         if (!Files.exists(metadata)) ConfigFolder.writeJson(metadata, packMetadata());
 
-        Path file = pack.resolve("data").resolve(CombatReforged.MODID).resolve(WeaponDataLoader.DATA_DIRECTORY)
+        Path file = pack.resolve("data").resolve(document.namespace()).resolve(WeaponDataLoader.DATA_DIRECTORY)
                 .resolve(document.relativePath());
         if (differences.size() == 0) {
             Files.deleteIfExists(file);

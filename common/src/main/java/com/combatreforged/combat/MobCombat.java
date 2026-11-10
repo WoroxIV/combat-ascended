@@ -7,9 +7,6 @@ import com.combatreforged.data.ParryDefinition;
 import com.combatreforged.data.WeaponAbility;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.ShurikenItem;
-import com.combatreforged.item.WeaponItem;
-import com.combatreforged.item.WeaponMaterial;
 import com.combatreforged.registry.ModSounds;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,28 +15,20 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
 /**
  * Règles de combat des mobs. Ils ignorent le maniement à deux mains et les combos, mais respectent la portée de leur arme,
- * peuvent parer, voir leur garde brisée, et alternent leurs coups en dual wield. Tout se coupe avec rules.json, Better Combat ou Epic Fight.
+ * peuvent parer, voir leur garde brisée, et alternent leurs coups en dual wield. Tout se coupe avec rules.json.
  */
 public final class MobCombat {
-    private static final UUID SWORD_DAMAGE_ID = ModAttributes.uuid("mob_sword_damage");
-    private static final double PLAYER_BASE_REACH = 3.0D;
     /** Une arme plus courte que le vanilla réduit la zone du mob, sans jamais l'annuler. */
     private static final double SMALLEST_REACH_CHANGE = -0.5D;
     private static final double PERCENT = 100.0D;
     private static final int GUARD_GOAL_PRIORITY = 1;
-    private static final int THROW_GOAL_PRIORITY = 2;
 
     private MobCombat() {
     }
@@ -47,26 +36,9 @@ public final class MobCombat {
     /** Ce que l'arme ajoute (ou retire) à la zone d'attaque du mob, par rapport à une arme de portée normale. */
     public static double extraReach(Mob mob) {
         if (!WeaponData.rules().reachActive()) return 0.0D;
-        return WeaponProfiles.definition(mob.getMainHandItem()).map(definition -> Math.max(SMALLEST_REACH_CHANGE, definition.attackReach() - PLAYER_BASE_REACH)).orElse(0.0D);
+        return WeaponProfiles.definition(mob.getMainHandItem()).map(definition -> Math.max(SMALLEST_REACH_CHANGE, definition.reachBonus())).orElse(0.0D);
     }
 
-    /**
-     * Fait porter un coup à un mob avec les dégâts d'une épée du matériau de son arme : il frappe au rythme de son espèce,
-     * quelle que soit la vitesse de l'arme, et une arme lente mais puissante serait bien plus dangereuse entre ses mains.
-     * À appeler après l'éventuel échange de mains : l'arme en main principale est celle qui frappe.
-     */
-    public static boolean hitLikeSword(Mob mob, BooleanSupplier attack) {
-        AttributeInstance damage = mob.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (damage == null || !(mob.getMainHandItem().getItem() instanceof WeaponItem weapon)) return attack.getAsBoolean();
-        WeaponMaterial material = weapon.getMaterial();
-        double correction = material.swordDamage() - weapon.definition().damageFor(material);
-        damage.addTransientModifier(new AttributeModifier(SWORD_DAMAGE_ID, "Mob sword damage", correction, AttributeModifier.Operation.ADDITION));
-        try {
-            return attack.getAsBoolean();
-        } finally {
-            damage.removeModifier(SWORD_DAMAGE_ID);
-        }
-    }
 
     public static boolean isOffhandTurn(Mob mob) {
         return ((ICombatMob) mob).combatreforged$offhandTurn();
@@ -95,9 +67,6 @@ public final class MobCombat {
     public static void addGoals(Mob mob) {
         if (!(mob instanceof PathfinderMob pathfinder)) return;
         if (guardHand(mob) != null) pathfinder.goalSelector.addGoal(GUARD_GOAL_PRIORITY, new MobGuardGoal(pathfinder));
-        if (mob instanceof AbstractSkeleton && mob.getMainHandItem().getItem() instanceof ShurikenItem) {
-            pathfinder.goalSelector.addGoal(THROW_GOAL_PRIORITY, new MobThrowShurikenGoal(pathfinder));
-        }
     }
 
     /** Coup reçu par un mob en garde : mêmes règles qu'un joueur, sans parade parfaite. Le bouclier reste géré par le jeu. */

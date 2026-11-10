@@ -10,32 +10,21 @@
     "ItemInHandRendererMixin",
     "DualSwingFirstPersonMixin",
     "DualSwingModelMixin",
-    "RangedHandRenderMixin",
-    "SkeletonModelMixin",
     "MobGuardModelMixin",
     "ZombieArmsMixin"
   ],
   "mixins": [
     "PlayerCombatMixin",
-    "ServerPlayerMixin",
-    "IngredientMixin",
     "ItemStackMixin",
-    "CrossbowItemMixin",
-    "MobRangedWeaponMixin",
-    "PiglinMixin",
+    "ItemStackEnchantmentMixin",
     "MobAccessor",
     "MobMixin",
     "LivingEntityMixin",
     "LivingEntityAccessor",
     "SweepParticleMixin",
-    "AbstractSkeletonMixin",
-    "BowItemMixin",
     "EnchantmentHelperMixin",
-    "EnchantmentMixin",
     "LivingEntityDamageMixin",
-    "LootTableMixin",
-    "PlayerDamageMixin",
-    "RecipeManagerMixin"
+    "PlayerDamageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

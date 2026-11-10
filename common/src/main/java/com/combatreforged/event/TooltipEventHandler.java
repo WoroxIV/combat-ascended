@@ -21,8 +21,9 @@ import com.combatreforged.data.OnHitEffect;
 import com.combatreforged.data.RulesDefinition;
 import com.combatreforged.data.WeaponData;
 import com.combatreforged.data.WeaponDefinition;
-import com.combatreforged.item.RangedWeapon;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.ShieldSystem;
+import com.combatreforged.combat.WeaponActions;
+import com.combatreforged.compat.CombatCompat;
 import com.combatreforged.registry.ModAttributes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -52,7 +53,7 @@ public final class TooltipEventHandler {
     private static final String DUAL_WIELDED_KEY = "attribute.combatreforged.dual_wielded";
     private static final String DISABLES_SHIELD_KEY = "attribute.combatreforged.disables_shield";
     private static final String HOLD_FOR_DETAILS_KEY = CombatReforged.MODID + ".tooltip.hold_for_details";
-    private static final String PROJECTILE_SPEED_KEY = CombatReforged.MODID + ".tooltip.projectile_speed";
+    private static final String MANAGED_KEY = CombatReforged.MODID + ".tooltip.managed_by_better_combat";
     private static final String ON_HIT_KEY = CombatReforged.MODID + ".tooltip.on_hit_effect";
     private static final String ON_HIT_CHANCE_KEY = ON_HIT_KEY + ".chance";
     private static final String ABILITY_KEY = CombatReforged.MODID + ".tooltip.ability";
@@ -72,14 +73,8 @@ public final class TooltipEventHandler {
 
     /** @param player null dans les aperçus au menu principal */
     public static void onTooltip(ItemStack stack, List<Component> tooltip, @Nullable Player player) {
-        if (stack.getItem() instanceof RangedWeapon ranged) {
-            Map<TooltipCategory, List<Component>> speed = new EnumMap<>(TooltipCategory.class);
-            add(speed, TooltipCategory.PROJECTILE_SPEED, Component.translatable(PROJECTILE_SPEED_KEY, number(ranged.speedMultiplier())));
-            arrange(tooltip, speed);
-            return;
-        }
         Optional<WeaponDefinition> profile = WeaponProfiles.definition(stack);
-        if (profile.isEmpty()) {
+        if (profile.isEmpty() || ShieldSystem.isShield(stack)) {
             addReachToOtherItem(stack, tooltip);
             return;
         }
@@ -92,17 +87,21 @@ public final class TooltipEventHandler {
         lines.put(TooltipCategory.SPEED, TooltipLayout.takeLines(tooltip, "attack_speed"));
         lines.put(TooltipCategory.ARMOR_PENETRATION, armorPenetrationLines(tooltip, definition));
         // Sans joueur (aperçu au menu principal), le jeu n'ajoute pas les valeurs de base du joueur aux dégâts et à la vitesse.
-        if (player == null && stack.getItem() instanceof WeaponItem weapon) {
-            lines.put(TooltipCategory.DAMAGE, List.of(statLine(definition.damageFor(weapon.getMaterial()), Attributes.ATTACK_DAMAGE)));
-            lines.put(TooltipCategory.SPEED, List.of(statLine(definition.attackSpeed(), Attributes.ATTACK_SPEED)));
+        if (player == null) {
+            lines.put(TooltipCategory.DAMAGE, List.of(statLine(1.0D + total(stack, Attributes.ATTACK_DAMAGE), Attributes.ATTACK_DAMAGE)));
+            lines.put(TooltipCategory.SPEED, List.of(statLine(4.0D + total(stack, Attributes.ATTACK_SPEED), Attributes.ATTACK_SPEED)));
         }
         TooltipLayout.takeLines(tooltip, reachKey());
         TooltipLayout.takeLines(tooltip, ModAttributes.SWEEPING_DAMAGE_RATIO.get().getDescriptionId());
 
-        if (WeaponItem.isTwoHanded(stack)) {
+        if (WeaponActions.isTwoHanded(stack)) {
             add(lines, TooltipCategory.HANDS, Component.translatable(TWO_HANDED_KEY));
         } else if (rules.dualWieldActive() && DualWieldSystem.canDualWield(stack)) {
             add(lines, TooltipCategory.HANDS, Component.translatable(DUAL_WIELDED_KEY));
+        } else if (CombatCompat.betterCombat() && definition.twoHanded()) {
+            add(lines, TooltipCategory.HANDS, Component.translatable(MANAGED_KEY, Component.translatable(TWO_HANDED_KEY)));
+        } else if (CombatCompat.betterCombat() && definition.dualWielded()) {
+            add(lines, TooltipCategory.HANDS, Component.translatable(MANAGED_KEY, Component.translatable(DUAL_WIELDED_KEY)));
         }
         if (rules.reachActive()) add(lines, TooltipCategory.REACH, reachLine(totalReach(stack)));
         if (rules.sweepActive() && definition.sweep().enabled() && definition.sweep().damageRatio() > 0.0D) {
@@ -117,7 +116,7 @@ public final class TooltipEventHandler {
         ParrySystem.parryOf(stack).ifPresent(parry -> add(lines, TooltipCategory.ABILITY, Component.translatable(PARRY_KEY)));
         DashAbility.dashOf(stack).ifPresent(dash -> addDashLines(dash, lines));
         // Sans dual wield, le combo d'une arme ambidextre n'existe pas : rien à annoncer.
-        if (rules.dualWieldActive() || !DualWieldSystem.canDualWield(stack)) {
+        if (rules.dualWieldActive() || CombatCompat.betterCombat() || !DualWieldSystem.canDualWield(stack)) {
             ComboSystem.comboOf(stack).ifPresent(combo -> addComboLines(combo, definition, lines));
         }
 
@@ -156,6 +155,12 @@ public final class TooltipEventHandler {
 
     private static boolean hasReachModifier(ItemStack stack) {
         return !reachBonuses(stack).isEmpty();
+    }
+
+    private static double total(ItemStack stack, Attribute attribute) {
+        double total = 0.0D;
+        for (AttributeModifier modifier : stack.getAttributeModifiers(EquipmentSlot.MAINHAND).get(attribute)) total += modifier.getAmount();
+        return total;
     }
 
     private static double totalReach(ItemStack stack) {

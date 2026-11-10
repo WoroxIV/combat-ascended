@@ -11,8 +11,6 @@ import java.util.function.Predicate;
 
 /** Quel tutoriel proposer au joueur qui obtient une arme. Aucune dépendance au client : vérifié par les tests automatiques. */
 public final class TutorialHints {
-    private static final double NORMAL_REACH = 3.0D;
-
     private TutorialHints() {
     }
 
@@ -28,7 +26,7 @@ public final class TutorialHints {
         if (rules.dashActive() && weapon.ability() == WeaponAbility.DASH) scenes.add("dash");
         if (rules.combosActive() && weapon.combo().enabled()) scenes.add("combos");
         if (rules.armorPenetrationActive() && weapon.armorPenetration() > 0.0D) scenes.add("armor_penetration");
-        if (rules.reachActive() && weapon.attackReach() != NORMAL_REACH) scenes.add("reach");
+        if (rules.reachActive() && weapon.reachBonus() != 0.0D) scenes.add("reach");
         return scenes;
     }
 

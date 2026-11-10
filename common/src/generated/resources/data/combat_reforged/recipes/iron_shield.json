@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "forge:ingots/iron"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "PMP",
+    "PPP",
+    " P "
+  ],
+  "result": {
+    "item": "combat_reforged:iron_shield"
+  }
+}

@@ -1,0 +1,604 @@
+{
+  "values": [
+    {
+      "id": "combat_reforged:wooden_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:stone_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:iron_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:golden_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:diamond_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:netherite_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_sickle",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:wooden_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:stone_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:iron_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:golden_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:diamond_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:netherite_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_scythe",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:wooden_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:stone_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:iron_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:golden_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:diamond_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:netherite_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:bronze_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:silver_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lead_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:nickel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:aluminum_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:electrum_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:constantan_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:osmium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_obsidian_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:refined_glowstone_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:invar_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:signalum_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lumium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:enderium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:brass_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:andesite_alloy_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manasteel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:elementium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:terrasteel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ironwood_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:steeleaf_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:knightmetal_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fiery_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:certus_quartz_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fluix_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:zanite_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:gravitite_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:warden_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:dragonbone_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:fire_dragonsteel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ice_dragonsteel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:lightning_dragonsteel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cobalt_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:manyullyn_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:allthemodium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:vibranium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:unobtainium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:ignitium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cursium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:cloggrum_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:froststeel_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:utherium_katana",
+      "required": false
+    },
+    {
+      "id": "combat_reforged:forgotten_katana",
+      "required": false
+    }
+  ]
+}

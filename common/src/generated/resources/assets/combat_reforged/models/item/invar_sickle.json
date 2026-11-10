@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "combat_reforged:item/invar_sickle"
+  }
+}

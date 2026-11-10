@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "forge:gems/diamond"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "PMP",
+    "PPP",
+    " P "
+  ],
+  "result": {
+    "item": "combat_reforged:diamond_shield"
+  }
+}

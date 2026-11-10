@@ -1,0 +1,43 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.combatreforged.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ItemInHandLayerMixin",
+    "KeyMappingAccessor",
+    "PlayerRendererMixin",
+    "ItemInHandRendererMixin",
+    "DualSwingFirstPersonMixin",
+    "DualSwingModelMixin",
+    "RangedHandRenderMixin",
+    "SkeletonModelMixin",
+    "MobGuardModelMixin",
+    "ZombieArmsMixin"
+  ],
+  "mixins": [
+    "PlayerCombatMixin",
+    "ServerPlayerMixin",
+    "IngredientMixin",
+    "ItemStackMixin",
+    "CrossbowItemMixin",
+    "MobRangedWeaponMixin",
+    "PiglinMixin",
+    "MobAccessor",
+    "MobMixin",
+    "LivingEntityMixin",
+    "LivingEntityAccessor",
+    "SweepParticleMixin",
+    "AbstractSkeletonMixin",
+    "BowItemMixin",
+    "EnchantmentHelperMixin",
+    "EnchantmentMixin",
+    "LivingEntityDamageMixin",
+    "LootTableMixin",
+    "PlayerDamageMixin",
+    "RecipeManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {
+      "type": "combat_reforged:weapon_palettes",
+      "directory": "entity/shield"
+    }
+  ]
+}

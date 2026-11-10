@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "combat_reforged:item/gravitite_bow_pulling_1"
+  }
+}

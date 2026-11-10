@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "tag": "forge:ingots/netherite"
+  },
+  "base": {
+    "item": "combat_reforged:diamond_katana"
+  },
+  "result": {
+    "item": "combat_reforged:netherite_katana"
+  },
+  "template": {
+    "tag": "combat_reforged:weapon_materials/netherite_template"
+  }
+}

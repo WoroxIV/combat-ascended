@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.combatreforged.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AttributeSupplierMixin",
+    "CrossbowAttackMixin",
+    "EnchantmentHelperFabricMixin",
+    "GearHoldingMixin",
+    "LivingEntityFabricMixin",
+    "PiglinAiMixin",
+    "PiglinArmPoseMixin",
+    "PillagerArmPoseMixin",
+    "PlayerFabricMixin",
+    "ProjectileFabricMixin",
+    "ProjectileUtilMixin",
+    "ServerGamePacketListenerMixin",
+    "ServerLevelMixin"
+  ],
+  "client": [
+    "AbstractClientPlayerMixin",
+    "GameRendererMixin",
+    "ItemInHandRendererFabricMixin",
+    "ItemRendererFabricMixin",
+    "KeyMappingFabricMixin",
+    "PlayerRendererFabricMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

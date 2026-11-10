@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "tag": "forge:ingots/netherite"
+  },
+  "base": {
+    "item": "combat_reforged:diamond_crossbow"
+  },
+  "result": {
+    "item": "combat_reforged:netherite_crossbow"
+  },
+  "template": {
+    "tag": "combat_reforged:weapon_materials/netherite_template"
+  }
+}

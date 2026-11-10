@@ -2,8 +2,10 @@ package com.combatreforged.combat;
 
 import com.combatreforged.platform.Platform;
 import com.combatreforged.CombatReforged;
+import com.combatreforged.api.CombatReforgedApi;
 import com.combatreforged.compat.CombatCompat;
 import com.combatreforged.data.ComboDefinition;
+import com.combatreforged.data.ComboGesture;
 import com.combatreforged.data.ComboStep;
 import com.combatreforged.data.DataField;
 import com.combatreforged.data.WeaponData;
@@ -120,6 +122,7 @@ public final class ComboSystem {
         Optional<ComboDefinition> active = activeCombo(player);
         if (active.isEmpty()) {
             state.resetCombo();
+            state.gesture = ComboGesture.DEFAULT;
             return Hit.none(strength);
         }
         ComboDefinition combo = active.get();
@@ -131,6 +134,8 @@ public final class ComboSystem {
         ComboStep step = combo.steps().get(index);
         boolean counts = strength * PERCENT >= combo.minCharge();
         boolean bothHands = counts && step.bothHands() && holdsPair(player);
+        // Better Combat joue ses propres animations.
+        state.gesture = counts && !CombatCompat.betterCombat() ? step.gesture() : ComboGesture.DEFAULT;
         return new Hit(combo, type, step, index, counts, bothHands, strength);
     }
 
@@ -182,6 +187,7 @@ public final class ComboSystem {
         boolean landed = isCreature(target) && (level.isClientSide || state.attackLanded);
         if (landed) {
             if (hit.counts()) {
+                if (!level.isClientSide) CombatReforgedApi.fireComboHit(player, player.getMainHandItem(), hit.step());
                 state.comboStep = (hit.index() + 1) % hit.combo().steps().size();
                 if (hit.special() && (hit.bothHands() || hit.step().cooldownMultiplier() != 1.0D)) {
                     state.nextAttackDelay = nextAttackDelay(player, hit);
@@ -220,6 +226,11 @@ public final class ComboSystem {
     public static boolean isAreaAttackInProgress(Player player) {
         ComboStep step = PlayerCombatState.of(player).activeStep;
         return step != null && step.hasArea();
+    }
+
+    /** Geste à jouer pour ce joueur pendant son coup de bras en cours. */
+    public static ComboGesture gestureOf(Player player) {
+        return player.swinging ? PlayerCombatState.of(player).gesture : ComboGesture.DEFAULT;
     }
 
     /** Le coup de bras en cours anime les deux bras (coup à deux armes). */

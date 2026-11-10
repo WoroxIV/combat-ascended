@@ -1,6 +1,7 @@
 package com.combatreforged.config;
 
 import com.combatreforged.CombatReforged;
+import com.combatreforged.config.ClientConfig;
 import com.combatreforged.data.DataProblem;
 import com.combatreforged.data.FieldSet;
 import com.combatreforged.data.GearDefinition;
@@ -11,6 +12,10 @@ import com.combatreforged.data.WeaponDefinition;
 import com.combatreforged.platform.Platform;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -35,6 +40,7 @@ public final class LegacyBetterWeaponry {
     private static final String OLD_DATA_DIRECTORY = "better_weaponry";
     private static final String IMPORTED_MARKER = ".imported_from_better_weaponry";
     private static final String OLD_REACH = "attack_reach";
+    private static final String OLD_ENCHANTMENT_PREFIX = OLD_NAMESPACE + ":";
     private static final double PLAYER_BASE_REACH = 3.0D;
     private static final String OLD_MOBS = "mobs";
     private static final String OLD_GUARD_CHANCE = "guard_chance";
@@ -50,6 +56,10 @@ public final class LegacyBetterWeaponry {
         Path oldRoot = Platform.get().configDir().resolve(OLD_NAMESPACE);
         Path marker = ConfigFolder.root().resolve(IMPORTED_MARKER);
         if (!Files.isDirectory(oldRoot) || Files.exists(marker)) return;
+
+        Path oldClient = Platform.get().configDir().resolve(OLD_NAMESPACE + "-client.json");
+        Path newClient = Platform.get().configDir().resolve(ClientConfig.FILE_NAME);
+        if (Files.isRegularFile(oldClient) && !Files.exists(newClient)) Files.copy(oldClient, newClient);
 
         importFile(oldRoot.resolve(WeaponDataLoader.RULES_FILE), ConfigFolder.rulesFile(), LegacyBetterWeaponry::keepRules, "./" + ConfigFolder.RULES_SCHEMA);
         importFile(oldRoot.resolve(WeaponDataLoader.GEAR_FILE), ConfigFolder.gearFile(), LegacyBetterWeaponry::keepGear, "./" + ConfigFolder.GEAR_SCHEMA);
@@ -108,6 +118,22 @@ public final class LegacyBetterWeaponry {
             kept.addProperty(WeaponDefinition.REACH_BONUS.name(), old.get(OLD_REACH).getAsDouble() - PLAYER_BASE_REACH);
         }
         return kept;
+    }
+
+    /** Remplace dans un objet sauvegardé les anciens identifiants de Reflective, Riposte et Élan. Rien n'est copié si l'objet n'en porte aucun. */
+    public static Tag renamedEnchantments(Tag tag) {
+        if (!(tag instanceof CompoundTag compound) || !compound.contains("components")) return tag;
+        String text = compound.toString();
+        if (!text.contains(OLD_ENCHANTMENT_PREFIX)) return tag;
+        String renamed = text;
+        for (String name : List.of("reflective", "riposte", "momentum")) {
+            renamed = renamed.replace(OLD_ENCHANTMENT_PREFIX + name, CombatReforged.MODID + ":" + name);
+        }
+        try {
+            return TagParser.parseTag(renamed);
+        } catch (CommandSyntaxException e) {
+            return tag;
+        }
     }
 
     /** Réglages d'une arme de Better Weaponry dans les datapacks d'un monde 2.0, à l'ancien chemin. */

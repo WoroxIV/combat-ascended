@@ -173,6 +173,26 @@ public final class CombatGameTests {
     public CombatGameTests() {
     }
 
+    /** Un objet enchanté avec Better Weaponry 2.0 garde ses enchantements, sous leur nouvel identifiant. */
+    @GameTest(template = ARENA)
+    public static void oldEnchantmentsAreRenamed(GameTestHelper helper) {
+        ItemStack stack = new ItemStack(ModItems.get(WeaponType.KATANA, WeaponMaterials.IRON).get());
+        stack.enchant(helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(ModEnchantments.RIPOSTE), 2);
+        net.minecraft.nbt.Tag saved = stack.save(helper.getLevel().registryAccess());
+        net.minecraft.nbt.Tag old = com.combatreforged.config.LegacyBetterWeaponry.renamedEnchantments(saved);
+        helper.assertTrue(old.toString().contains("combat_reforged:riposte"), "the current id is kept");
+        String legacy = saved.toString().replace("combat_reforged:riposte", "better_weaponry:riposte");
+        try {
+            net.minecraft.nbt.Tag parsed = net.minecraft.nbt.TagParser.parseTag(legacy);
+            ItemStack loaded = ItemStack.parse(helper.getLevel().registryAccess(), parsed).orElseThrow();
+            helper.assertTrue(ModEnchantments.level(helper.getLevel(), loaded, ModEnchantments.RIPOSTE) == 2, "the old enchantment should still work");
+        } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+            helper.fail("invalid test data: " + e.getMessage());
+            return;
+        }
+        helper.succeed();
+    }
+
     /** Les six épées vanilla parent, et ne reçoivent rien d'autre. */
     @GameTest(template = ARENA)
     public static void vanillaSwordsOnlyParry(GameTestHelper helper) {

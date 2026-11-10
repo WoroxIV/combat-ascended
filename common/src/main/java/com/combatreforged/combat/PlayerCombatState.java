@@ -34,6 +34,8 @@ public final class PlayerCombatState {
 
     // --- Combo ---
 
+    /** Geste du dernier coup porté : le coup de bras qui suit le joue. */
+    public com.combatreforged.data.ComboGesture gesture = com.combatreforged.data.ComboGesture.DEFAULT;
     /** Coup du combo qui va être porté (0 = premier). */
     public int comboStep;
     /** Moment (temps du monde, en ticks) après lequel le combo repart du début. */

@@ -20,7 +20,9 @@
     "MobMixin",
     "LivingEntityMixin",
     "LivingEntityAccessor",
-    "SweepParticleMixin"
+    "SweepParticleMixin",
+    "EnchantmentMixin",
+    "ItemStackEnchantmentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

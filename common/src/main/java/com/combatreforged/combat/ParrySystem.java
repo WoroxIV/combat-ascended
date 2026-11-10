@@ -2,6 +2,7 @@ package com.combatreforged.combat;
 
 import com.combatreforged.platform.IncomingDamage;
 import com.combatreforged.CombatReforged;
+import com.combatreforged.api.CombatReforgedApi;
 import com.combatreforged.compat.CombatCompat;
 import com.combatreforged.data.ParryDefinition;
 import com.combatreforged.data.WeaponAbility;
@@ -188,6 +189,7 @@ public final class ParrySystem {
         int riposte = ModEnchantments.level(player.level(), guard, ModEnchantments.RIPOSTE);
         grantPerfectBonus(player, bonusPercent + riposte * ModEnchantments.RIPOSTE_PERCENT_PER_LEVEL, bonusSeconds);
         ModEnchantments.reflect(player, guard, source, damage);
+        CombatReforgedApi.firePerfectParry(player, guard);
     }
 
     /** Après une parade parfaite, le prochain coup porté dans le temps imparti fait plus de dégâts. */

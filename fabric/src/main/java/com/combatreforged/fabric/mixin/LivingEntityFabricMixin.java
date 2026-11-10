@@ -3,7 +3,6 @@ package com.combatreforged.fabric.mixin;
 import com.combatreforged.combat.CombatEvents;
 import com.combatreforged.combat.ParrySystem;
 import com.combatreforged.combat.ShieldSystem;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.platform.IncomingDamage;
 import com.combatreforged.platform.Platform;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -123,11 +122,4 @@ public abstract class LivingEntityFabricMixin {
         if (!stack.isEmpty() && !self.isUsingItem()) ShieldSystem.onStartUsingItem(self, stack);
     }
 
-    /** Sur le jeu de base, seule la hache désactive les boucliers. */
-    @ModifyReturnValue(method = "canDisableShield", at = @At("RETURN"))
-    private boolean combatreforged$weaponsDisableShields(boolean disables) {
-        LivingEntity self = (LivingEntity) (Object) this;
-        ItemStack weapon = self.getWeaponItem();
-        return weapon.getItem() instanceof WeaponItem item ? item.canDisableShield(weapon, self.getUseItem(), self, self) : disables;
-    }
 }

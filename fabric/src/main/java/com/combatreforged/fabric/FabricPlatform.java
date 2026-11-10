@@ -1,8 +1,6 @@
 package com.combatreforged.fabric;
 
 import com.combatreforged.CombatReforged;
-import com.combatreforged.item.ShurikenItem;
-import com.combatreforged.item.WeaponItem;
 import com.combatreforged.platform.Platform;
 import com.combatreforged.platform.Registered;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -145,8 +143,6 @@ final class FabricPlatform implements Platform {
 
     @Override
     public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
-        if (stack.getItem() instanceof WeaponItem weapon) return weapon.supportsEnchantment(stack, enchantment);
-        if (stack.getItem() instanceof ShurikenItem shuriken) return shuriken.supportsEnchantment(stack, enchantment);
         return enchantment.value().isSupportedItem(stack);
     }
 

@@ -2,7 +2,6 @@ package com.combatreforged.combat;
 
 import com.combatreforged.data.DetectionRules;
 import com.combatreforged.data.WeaponData;
-import com.combatreforged.data.WeaponDefinition;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -179,6 +178,11 @@ public final class WeaponDetector {
         return false;
     }
 
+    /** Archétype déduit du nom de l'objet seul, sans vérifier que c'est une arme : null si aucun mot n'est reconnu. */
+    public static ResourceLocation classify(String path, DetectionRules rules) {
+        return fromName(path, keywords(rules));
+    }
+
     static List<String> words(String path) {
         return Arrays.asList(path.toLowerCase(Locale.ROOT).split("[_/.\\-]+"));
     }
@@ -223,8 +227,4 @@ public final class WeaponDetector {
         return Optional.ofNullable(WeaponProfiles.table().get(BuiltInRegistries.ITEM.getKey(stack.getItem())));
     }
 
-    /** Pour les tests : indique si le comportement détecté garde sa capacité. */
-    static boolean keepsAbility(WeaponDefinition definition) {
-        return definition.ability() != com.combatreforged.data.WeaponAbility.NONE;
-    }
 }

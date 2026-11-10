@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "entries": [
-    "combat_reforged:replace_vanilla_gear",
-    "combat_reforged:nether_enchanted_books",
-    "combat_reforged:end_enchanted_books"
-  ]
-}

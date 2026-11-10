@@ -4,7 +4,7 @@ import com.combatreforged.combat.CombatEvents;
 import com.combatreforged.combat.TwoHandedSystem;
 import com.combatreforged.combat.WeaponProfiles;
 import com.combatreforged.data.WeaponData;
-import com.combatreforged.item.WeaponItem;
+import com.combatreforged.combat.WeaponActions;
 import com.combatreforged.platform.Platform;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -46,8 +46,7 @@ public abstract class PlayerFabricMixin {
     private AABB combatreforged$sweepZone(AABB box, double x, double y, double z, Operation<AABB> original, @Local(argsOnly = true) Entity target) {
         Player player = (Player) (Object) this;
         ItemStack stack = player.getMainHandItem();
-        if (stack.getItem() instanceof WeaponItem weapon) return weapon.getSweepHitBox(stack, player, target);
-        if (WeaponData.rules().sweepActive() && WeaponProfiles.isAdopted(stack)) return WeaponItem.sweepZone(WeaponProfiles.definition(stack).orElseThrow(), target);
+        if (WeaponData.rules().sweepActive() && WeaponProfiles.isAdopted(stack)) return WeaponActions.sweepZone(WeaponProfiles.definition(stack).orElseThrow(), target);
         return original.call(box, x, y, z);
     }
 

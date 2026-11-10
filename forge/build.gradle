@@ -86,7 +86,22 @@ dependencies {
 }
 tasks.matching { it.name == 'runGameTestServer' }.configureEach {
     doFirst {
-        copy { from betterWeaponryJar; into rootProject.file('run/gameTestServer/mods') }
+        if (project.hasProperty('crAlone')) delete fileTree(rootProject.file('run/gameTestServer/mods'))
+        else copy { from betterWeaponryJar; into rootProject.file('run/gameTestServer/mods') }
         copy { from rootProject.file('tools/parity/reference-1.20.1.json'); into rootProject.file('run/gameTestServer'); rename { 'parity-reference.json' } }
+    }
+}
+
+// Essais avec de vrais mods (Better Combat, Epic Fight...) : gradlew :forge:runGameTestServer -Pcompat_jars=<dossier de jars>
+if (project.hasProperty('compat_jars')) {
+    repositories {
+        ivy {
+            url = uri(project.property('compat_jars'))
+            patternLayout { artifact '[module].[ext]' }
+            metadataSources { artifact() }
+        }
+    }
+    dependencies {
+        fileTree(project.property('compat_jars')) { include '*.jar' }.each { jar -> modRuntimeOnly "compat:${jar.name - '.jar'}:1" }
     }
 }

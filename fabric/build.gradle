@@ -173,7 +173,7 @@ def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.20.1/fabric/build/
 dependencies {
     if (betterWeaponryJar.exists()) {
         modCompileOnly files(betterWeaponryJar)
-        modLocalRuntime files(betterWeaponryJar)
+        if (!project.hasProperty('crAlone')) modLocalRuntime files(betterWeaponryJar)
     }
 }
 tasks.matching { it.name == 'runGameTestServer' }.configureEach {

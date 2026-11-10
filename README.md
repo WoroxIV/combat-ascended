@@ -92,7 +92,6 @@ The combat system of Better Weaponry 2.0 moved here. At first launch, Combat Ref
 ```powershell
 ./gradlew build                 # build the jars
 ./gradlew runGameTestServer     # run the automated tests on every loader
-./gradlew :neoforge:runData     # regenerate the translations
 ```
 
 The tests use the real weapons of Better Weaponry, built in the sibling `BetterWeaponry-<version>` folder. Nothing from Better Weaponry goes into the published jar.

@@ -8,7 +8,7 @@ cr = Path(sys.argv[2]) / "common/src/main/java/com/combatreforged"
 
 
 def normal(text):
-    return text.replace("com.combatreforged", "com.betterweaponry").replace("CombatReforged", "BetterWeaponry").replace("combat_reforged", "better_weaponry").replace("combatreforged", "betterweaponry")
+    return text.replace("Combat Reforged", "Better Weaponry").replace("com.combatreforged", "com.betterweaponry").replace("CombatReforged", "BetterWeaponry").replace("combat_reforged", "better_weaponry").replace("combatreforged", "betterweaponry")
 
 
 different = [name for name in SHARED if not (bw / name).exists() or normal((cr / name).read_text(encoding="utf-8")) != normal((bw / name).read_text(encoding="utf-8"))]

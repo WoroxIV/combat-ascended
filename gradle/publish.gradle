@@ -24,9 +24,10 @@ publishMods {
             requires('fabric-api')
             optional('modmenu')
         } else {
-            // Epic Fight n'existe pas sur Fabric.
-            optional('epic-fight')
+            // Combat Reforged refuse de démarrer avec Epic Fight (qui n'existe pas sur Fabric).
+            incompatible('epic-fight')
         }
+        optional('better-weaponry')
         optional('jei')
         optional('emi')
         optional('better-combat')
@@ -43,8 +44,9 @@ publishMods {
             requires('fabric-api')
             optional('modmenu')
         } else {
-            optional('epic-fight-mod')
+            incompatible('epic-fight-mod')
         }
+        optional('better-weaponry')
         optional('jei')
         optional('emi')
         optional('better-combat-by-daedelus')

@@ -60,7 +60,7 @@ dependencies {
 }
 
 // Les tests tournent avec les vraies armes de Better Weaponry : rien de ce mod ne part dans le jar publié.
-def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.21.1/neoforge/build/libs/better_weaponry-3.0.0+1.21.1-neoforge.jar')
+def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.21.1/neoforge/build/libs/better_weaponry-3.1.0+1.21.1-neoforge.jar')
 dependencies {
     if (betterWeaponryJar.exists()) compileOnly files(betterWeaponryJar)
 }

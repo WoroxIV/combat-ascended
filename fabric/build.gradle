@@ -111,7 +111,7 @@ tasks.register('runProductionClient', net.fabricmc.loom.task.prod.ClientProducti
 }
 
 // Les tests tournent avec les vraies armes de Better Weaponry : rien de ce mod ne part dans le jar publié.
-def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.21.1/fabric/build/libs/better_weaponry-3.0.0+1.21.1-fabric.jar')
+def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.21.1/fabric/build/libs/better_weaponry-3.1.0+1.21.1-fabric.jar')
 dependencies {
     if (betterWeaponryJar.exists()) {
         modCompileOnly files(betterWeaponryJar)

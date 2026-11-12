@@ -46,7 +46,7 @@ publishMods {
         } else {
             incompatible('epic-fight-mod')
         }
-        optional('better-weaponry')
+        optional('better-weaponry-mod')
         optional('jei')
         optional('emi')
         optional('better-combat-by-daedelus')

@@ -16,7 +16,7 @@ FOLDERS = {"recipe": "recipes", "advancement": "advancements", "structure": "str
 TAG_FOLDERS = {"item": "items", "entity_type": "entity_types", "block": "blocks"}
 
 # Ces enchantements sont des classes en 1.20.1, et l'enchantabilité y passe par les catégories d'enchantement.
-REMOVED = ("combat_reforged/enchantment", "minecraft/tags/enchantment")
+REMOVED = ("combat_ascended/enchantment", "minecraft/tags/enchantment")
 REMOVED_TAG_FOLDERS = ("enchantable",)
 
 CONDITIONS = {"neoforge:mod_loaded": "forge:mod_loaded", "neoforge:not": "forge:not", "neoforge:or": "forge:or",

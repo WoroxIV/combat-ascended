@@ -1,0 +1,21 @@
+{
+  "parent": "combat_ascended:rapier",
+  "reach_bonus": 0.5,
+  "armor_penetration": 30,
+  "combo": {
+    "enabled": true,
+    "reset_after_seconds": 2.5,
+    "max_bonus_damage": 12,
+    "steps": [
+      {},
+      {},
+      {
+        "radius": 4.0,
+        "angle": 30,
+        "damage_multiplier": 1.4,
+        "cooldown_multiplier": 1.4,
+        "gesture": "thrust"
+      }
+    ]
+  }
+}

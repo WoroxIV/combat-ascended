@@ -1,0 +1,13 @@
+{
+  "parent": "combat_ascended:katana",
+  "reach_bonus": 1.25,
+  "combo": {
+    "finisher": {
+      "radius": 4.5,
+      "angle": 120,
+      "damage_multiplier": 1.5,
+      "cooldown_multiplier": 1.5,
+      "gesture": "slash"
+    }
+  }
+}

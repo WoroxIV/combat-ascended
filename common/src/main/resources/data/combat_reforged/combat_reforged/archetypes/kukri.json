@@ -1,9 +1,0 @@
-{
-  "parent": "combat_reforged:dagger",
-  "reach_bonus": -0.5,
-  "ability": "none",
-  "sweep": {
-    "radius": 0.75
-  },
-  "armor_penetration": 5
-}

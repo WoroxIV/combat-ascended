@@ -1,7 +1,0 @@
-{
-  "parent": "combat_reforged:mace",
-  "disables_shield": true,
-  "sweep": {
-    "enabled": false
-  }
-}

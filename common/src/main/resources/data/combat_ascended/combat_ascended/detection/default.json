@@ -1,0 +1,375 @@
+{
+  "keywords": [
+    {
+      "words": [
+        "claymore"
+      ],
+      "archetype": "combat_ascended:claymore"
+    },
+    {
+      "words": [
+        "greatsword",
+        "great_sword",
+        "zweihander"
+      ],
+      "archetype": "combat_ascended:greatsword"
+    },
+    {
+      "words": [
+        "longsword",
+        "long_sword"
+      ],
+      "archetype": "combat_ascended:longsword"
+    },
+    {
+      "words": [
+        "broadsword",
+        "broad_sword"
+      ],
+      "archetype": "combat_ascended:broadsword"
+    },
+    {
+      "words": [
+        "shortsword",
+        "short_sword",
+        "gladius"
+      ],
+      "archetype": "combat_ascended:shortsword"
+    },
+    {
+      "words": [
+        "cutlass"
+      ],
+      "archetype": "combat_ascended:cutlass"
+    },
+    {
+      "words": [
+        "scimitar"
+      ],
+      "archetype": "combat_ascended:scimitar"
+    },
+    {
+      "words": [
+        "saber",
+        "sabre"
+      ],
+      "archetype": "combat_ascended:saber"
+    },
+    {
+      "words": [
+        "machete"
+      ],
+      "archetype": "combat_ascended:machete"
+    },
+    {
+      "words": [
+        "rapier"
+      ],
+      "archetype": "combat_ascended:rapier",
+      "suffix": true
+    },
+    {
+      "words": [
+        "estoc"
+      ],
+      "archetype": "combat_ascended:estoc"
+    },
+    {
+      "words": [
+        "katana",
+        "uchigatana"
+      ],
+      "archetype": "combat_ascended:katana",
+      "suffix": true
+    },
+    {
+      "words": [
+        "tachi"
+      ],
+      "archetype": "combat_ascended:tachi"
+    },
+    {
+      "words": [
+        "nodachi",
+        "odachi"
+      ],
+      "archetype": "combat_ascended:nodachi"
+    },
+    {
+      "words": [
+        "dagger",
+        "stiletto",
+        "dirk"
+      ],
+      "archetype": "combat_ascended:dagger",
+      "suffix": true
+    },
+    {
+      "words": [
+        "knife"
+      ],
+      "archetype": "combat_ascended:knife"
+    },
+    {
+      "words": [
+        "kukri"
+      ],
+      "archetype": "combat_ascended:kukri"
+    },
+    {
+      "words": [
+        "sai"
+      ],
+      "archetype": "combat_ascended:sai"
+    },
+    {
+      "words": [
+        "claw",
+        "claws"
+      ],
+      "archetype": "combat_ascended:claw"
+    },
+    {
+      "words": [
+        "fist",
+        "gauntlet",
+        "knuckle",
+        "knuckles"
+      ],
+      "archetype": "combat_ascended:fist"
+    },
+    {
+      "words": [
+        "tonfa"
+      ],
+      "archetype": "combat_ascended:tonfa"
+    },
+    {
+      "words": [
+        "sickle"
+      ],
+      "archetype": "combat_ascended:sickle"
+    },
+    {
+      "words": [
+        "kama"
+      ],
+      "archetype": "combat_ascended:kama"
+    },
+    {
+      "words": [
+        "scythe"
+      ],
+      "archetype": "combat_ascended:scythe",
+      "suffix": true
+    },
+    {
+      "words": [
+        "axe",
+        "hatchet"
+      ],
+      "archetype": "combat_ascended:axe"
+    },
+    {
+      "words": [
+        "battleaxe",
+        "battle_axe",
+        "waraxe",
+        "war_axe"
+      ],
+      "archetype": "combat_ascended:battleaxe"
+    },
+    {
+      "words": [
+        "greataxe",
+        "great_axe"
+      ],
+      "archetype": "combat_ascended:greataxe"
+    },
+    {
+      "words": [
+        "double_axe",
+        "doubleaxe"
+      ],
+      "archetype": "combat_ascended:double_axe"
+    },
+    {
+      "words": [
+        "mace"
+      ],
+      "archetype": "combat_ascended:mace"
+    },
+    {
+      "words": [
+        "club",
+        "cudgel"
+      ],
+      "archetype": "combat_ascended:club"
+    },
+    {
+      "words": [
+        "hammer"
+      ],
+      "archetype": "combat_ascended:hammer",
+      "suffix": true
+    },
+    {
+      "words": [
+        "warhammer",
+        "war_hammer"
+      ],
+      "archetype": "combat_ascended:warhammer"
+    },
+    {
+      "words": [
+        "greathammer",
+        "great_hammer"
+      ],
+      "archetype": "combat_ascended:greathammer"
+    },
+    {
+      "words": [
+        "maul"
+      ],
+      "archetype": "combat_ascended:maul"
+    },
+    {
+      "words": [
+        "flail"
+      ],
+      "archetype": "combat_ascended:flail"
+    },
+    {
+      "words": [
+        "morningstar",
+        "morning_star"
+      ],
+      "archetype": "combat_ascended:morningstar"
+    },
+    {
+      "words": [
+        "spear"
+      ],
+      "archetype": "combat_ascended:spear",
+      "suffix": true
+    },
+    {
+      "words": [
+        "pike"
+      ],
+      "archetype": "combat_ascended:pike"
+    },
+    {
+      "words": [
+        "halberd"
+      ],
+      "archetype": "combat_ascended:halberd",
+      "suffix": true
+    },
+    {
+      "words": [
+        "glaive"
+      ],
+      "archetype": "combat_ascended:glaive",
+      "suffix": true
+    },
+    {
+      "words": [
+        "naginata"
+      ],
+      "archetype": "combat_ascended:naginata"
+    },
+    {
+      "words": [
+        "lance"
+      ],
+      "archetype": "combat_ascended:lance"
+    },
+    {
+      "words": [
+        "trident"
+      ],
+      "archetype": "combat_ascended:trident"
+    },
+    {
+      "words": [
+        "javelin",
+        "harpoon"
+      ],
+      "archetype": "combat_ascended:javelin"
+    },
+    {
+      "words": [
+        "quarterstaff",
+        "quarter_staff",
+        "staff"
+      ],
+      "archetype": "combat_ascended:quarterstaff"
+    },
+    {
+      "words": [
+        "battlestaff",
+        "battle_staff"
+      ],
+      "archetype": "combat_ascended:battlestaff"
+    },
+    {
+      "words": [
+        "twinblade",
+        "twin_blade"
+      ],
+      "archetype": "combat_ascended:twinblade"
+    },
+    {
+      "words": [
+        "warglaive",
+        "war_glaive"
+      ],
+      "archetype": "combat_ascended:warglaive"
+    },
+    {
+      "words": [
+        "chakram"
+      ],
+      "archetype": "combat_ascended:chakram"
+    },
+    {
+      "words": [
+        "whip"
+      ],
+      "archetype": "combat_ascended:whip"
+    },
+    {
+      "words": [
+        "anchor"
+      ],
+      "archetype": "combat_ascended:anchor"
+    },
+    {
+      "words": [
+        "sword",
+        "blade"
+      ],
+      "archetype": "combat_ascended:sword",
+      "suffix": true
+    }
+  ],
+  "excluded_words": [
+    "pickaxe",
+    "shovel",
+    "spade",
+    "hoe",
+    "paxel",
+    "mattock",
+    "excavator",
+    "drill",
+    "chainsaw",
+    "shears",
+    "wrench",
+    "brush"
+  ],
+  "excluded_namespaces": [
+    "farmersdelight"
+  ],
+  "excluded_items": []
+}

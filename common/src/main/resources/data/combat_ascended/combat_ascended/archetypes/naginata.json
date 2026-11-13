@@ -1,0 +1,20 @@
+{
+  "parent": "combat_ascended:glaive",
+  "reach_bonus": 2.0,
+  "combo": {
+    "enabled": true,
+    "reset_after_seconds": 2.5,
+    "max_bonus_damage": 12,
+    "steps": [
+      {},
+      {},
+      {
+        "radius": 4.5,
+        "angle": 120,
+        "damage_multiplier": 1.35,
+        "cooldown_multiplier": 1.35,
+        "gesture": "slash"
+      }
+    ]
+  }
+}

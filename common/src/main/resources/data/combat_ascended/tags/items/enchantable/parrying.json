@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:shield",
+    {
+      "id": "#forge:tools/shields",
+      "required": false
+    },
+    {
+      "id": "#combat_reforged:enchantable/parrying",
+      "required": false
+    }
+  ]
+}

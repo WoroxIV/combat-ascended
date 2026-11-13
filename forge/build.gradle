@@ -4,7 +4,7 @@ plugins {
     id 'me.modmuss50.mod-publish-plugin'
 }
 
-ext.gameTestAnnotations = '@net.minecraftforge.gametest.GameTestHolder(CombatReforged.MODID)\n@net.minecraftforge.gametest.PrefixGameTestTemplate(false)'
+ext.gameTestAnnotations = '@net.minecraftforge.gametest.GameTestHolder(CombatAscended.MODID)\n@net.minecraftforge.gametest.PrefixGameTestTemplate(false)'
 ext.gameTestArena = 'empty'
 
 legacyForge {
@@ -46,21 +46,21 @@ apply from: rootProject.file('gradle/publish.gradle')
 
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
-    config 'combatreforged.mixins.json'
-    config 'combatreforged.forge.mixins.json'
+    config 'combatascended.mixins.json'
+    config 'combatascended.forge.mixins.json'
 }
 
 tasks.named('processResources', ProcessResources) {
     from(rootProject.file('common/accesstransformer.cfg')) { into 'META-INF' }
     // Forge cherche la table de correspondance des noms indiquée dans chaque configuration de mixins.
-    filesMatching(['combatreforged.mixins.json', 'combatreforged.forge.mixins.json']) {
+    filesMatching(['combatascended.mixins.json', 'combatascended.forge.mixins.json']) {
         filter { String line -> line.contains('"package"') ? "  \"refmap\": \"${mod_id}.refmap.json\",\n" + line : line }
     }
 }
 
 // Le bloc mixin ci-dessus ne sert qu'au développement : dans le jar publié, Forge lit la liste dans le manifeste.
 tasks.named('jar', Jar) {
-    manifest.attributes('MixinConfigs': 'combatreforged.mixins.json,combatreforged.forge.mixins.json')
+    manifest.attributes('MixinConfigs': 'combatascended.mixins.json,combatascended.forge.mixins.json')
 }
 
 dependencies {
@@ -80,7 +80,7 @@ dependencies {
 
 // Les tests tournent avec les vraies armes de Better Weaponry : rien de ce mod ne part dans le jar publié.
 // Le jar de "devlibs" garde les noms de développement, le seul que l'environnement de test peut charger.
-def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.20.1/forge/build/devlibs/better_weaponry-3.1.0+1.20.1-forge.jar')
+def betterWeaponryJar = rootProject.file('../../Better Weaponry/BetterWeaponry-1.20.1/forge/build/devlibs/better_weaponry-3.1.2+1.20.1-forge.jar')
 dependencies {
     if (betterWeaponryJar.exists()) compileOnly files(betterWeaponryJar)
 }

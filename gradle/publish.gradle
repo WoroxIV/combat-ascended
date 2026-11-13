@@ -24,7 +24,7 @@ publishMods {
             requires('fabric-api')
             optional('modmenu')
         } else {
-            // Combat Reforged refuse de démarrer avec Epic Fight (qui n'existe pas sur Fabric).
+            // Combat Ascended refuse de démarrer avec Epic Fight (qui n'existe pas sur Fabric).
             incompatible('epic-fight')
         }
         optional('better-weaponry')

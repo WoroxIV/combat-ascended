@@ -1,6 +1,0 @@
-{
-  "parent": "combat_reforged:tutorial/scythe_base",
-  "textures": {
-    "layer0": "combat_reforged:item/tutorial/iron_scythe"
-  }
-}

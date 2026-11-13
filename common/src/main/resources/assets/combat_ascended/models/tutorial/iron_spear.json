@@ -1,0 +1,6 @@
+{
+  "parent": "combat_ascended:tutorial/spear_base",
+  "textures": {
+    "layer0": "combat_ascended:item/tutorial/iron_spear"
+  }
+}

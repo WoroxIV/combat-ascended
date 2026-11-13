@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "#combat_reforged:not_reflected_when_pickable",
+      "required": false
+    }
+  ]
+}

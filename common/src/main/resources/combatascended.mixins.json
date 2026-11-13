@@ -1,0 +1,32 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.combatascended.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ItemInHandLayerMixin",
+    "KeyMappingAccessor",
+    "PlayerRendererMixin",
+    "ItemInHandRendererMixin",
+    "DualSwingFirstPersonMixin",
+    "DualSwingModelMixin",
+    "MobGuardModelMixin",
+    "ZombieArmsMixin"
+  ],
+  "mixins": [
+    "PlayerCombatMixin",
+    "ItemStackMixin",
+    "ItemStackEnchantmentMixin",
+    "MobAccessor",
+    "MobMixin",
+    "LivingEntityMixin",
+    "LivingEntityAccessor",
+    "SweepParticleMixin",
+    "EnchantmentHelperMixin",
+    "LivingEntityDamageMixin",
+    "PlayerDamageMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

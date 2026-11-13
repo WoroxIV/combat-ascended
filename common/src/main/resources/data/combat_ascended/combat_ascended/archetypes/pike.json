@@ -1,0 +1,5 @@
+{
+  "parent": "combat_ascended:spear",
+  "two_handed": true,
+  "reach_bonus": 3.0
+}

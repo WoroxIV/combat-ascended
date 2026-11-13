@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "#combat_reforged:enchantable/parry_weapons",
+      "required": false
+    }
+  ]
+}

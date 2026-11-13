@@ -1,39 +1,39 @@
-# Combat Reforged
+# Combat Ascended
 
 A combat system for **any** weapon mod: combos, parries, dashes, dual wielding, two-handed weapons, area finishers, on-hit effects and armor penetration, with about 50 weapon archetypes, an in-game editor and animated tutorials.
 
-- **Mod ID:** `combat_reforged`
+- **Mod ID:** `combat_ascended`
 - **Loaders:** NeoForge and Fabric on Minecraft 1.21.1, Forge and Fabric on 1.20.1
 - **Works with:** Better Combat, Better Weaponry, Simply Swords and any mod that adds weapons
 - **Not compatible with:** Epic Fight. The game refuses to start with both, because both replace the whole combat system.
 
 ## How a weapon gets its behavior
 
-Combat Reforged looks for a behavior for every item, in this order:
+Combat Ascended looks for a behavior for every item, in this order:
 
 1. A weapon file that lists the item.
-2. A tag `combat_reforged:archetypes/<archetype>`.
+2. A tag `combat_ascended:archetypes/<archetype>`.
 3. A Better Combat `weapon_attributes` file or an Epic Fight `capabilities/weapons` file shipped by the mod, even when those mods are not installed.
 4. The words of the item's name (`iron_longsword` becomes `longsword`), when the item is really a weapon.
 5. Any other weapon behaves like a vanilla sword: it can parry.
 
 An item counts as a weapon if it is a sword, axe or trident class, has a weapon tag, or gives attack damage in the main hand. Detected weapons never lock the off hand, and keep their own right click if they have one. The six vanilla swords can parry and do nothing else by default.
 
-Run `/combatreforged scan` to list every weapon, its archetype and the reason. The report is written to `config/combat_reforged/scan.json`.
+Run `/combatascended scan` to list every weapon, its archetype and the reason. The report is written to `config/combat_ascended/scan.json`.
 
 ## Adding weapons from your mod or modpack
 
-A weapon takes three lines. Put this file in your mod or in a data pack, at `data/<mod>/combat_reforged/weapons/<name>.json`:
+A weapon takes three lines. Put this file in your mod or in a data pack, at `data/<mod>/combat_ascended/weapons/<name>.json`:
 
 ```json
-{ "parent": "combat_reforged:katana", "items": ["mymod:frost_katana", "#mymod:katanas"] }
+{ "parent": "combat_ascended:katana", "items": ["mymod:frost_katana", "#mymod:katanas"] }
 ```
 
 Write only what you change. Objects merge field by field, and lists are replaced:
 
 ```json
 {
-  "parent": "combat_reforged:katana",
+  "parent": "combat_ascended:katana",
   "items": ["mymod:storm_katana"],
   "reach_bonus": 1.0,
   "on_hit_effects": [{ "effect": "minecraft:slowness", "duration_seconds": 2, "level": 1, "chance": 100 }],
@@ -43,18 +43,18 @@ Write only what you change. Objects merge field by field, and lists are replaced
 
 `combo.finisher` changes only the last hit, so you do not have to rewrite the whole list.
 
-- **New archetype:** `data/<mod>/combat_reforged/archetypes/<name>.json`, same fields.
-- **New words for the detection:** `data/<mod>/combat_reforged/detection/<name>.json`, or `config/combat_reforged/detection.json`:
+- **New archetype:** `data/<mod>/combat_ascended/archetypes/<name>.json`, same fields.
+- **New words for the detection:** `data/<mod>/combat_ascended/detection/<name>.json`, or `config/combat_ascended/detection.json`:
 
 ```json
-{ "keywords": [{ "words": ["nagamaki"], "archetype": "combat_reforged:naginata" }], "excluded_words": ["sawblade"] }
+{ "keywords": [{ "words": ["nagamaki"], "archetype": "combat_ascended:naginata" }], "excluded_words": ["sawblade"] }
 ```
 
-Files in `config/combat_reforged/weapons/<mod>/<name>.json` and in world data packs override the mods. `weapon.schema.json` in the config folder gives auto-completion in VS Code.
+Files in `config/combat_ascended/weapons/<mod>/<name>.json` and in world data packs override the mods. `weapon.schema.json` in the config folder gives auto-completion in VS Code.
 
 ### Java API
 
-`com.combatreforged.api.CombatReforgedApi` gives the profile of an item and lets you listen to parries and combos. Everything else can change between versions.
+`com.combatascended.api.CombatAscendedApi` gives the profile of an item and lets you listen to parries and combos. Everything else can change between versions.
 
 ## Archetypes
 
@@ -81,11 +81,11 @@ Files in `config/combat_reforged/weapons/<mod>/<name>.json` and in world data pa
 
 ## With Better Combat
 
-Better Combat handles reach, sweep, two-handed weapons, dual wielding and the attack animations. Combat Reforged keeps combos, parries, dashes, on-hit effects, enchantments, shield disabling, armor penetration, mob behaviors and the PvP cap. Each swing counts once in a combo, even when it hits several targets.
+Better Combat handles reach, sweep, two-handed weapons, dual wielding and the attack animations. Combat Ascended keeps combos, parries, dashes, on-hit effects, enchantments, shield disabling, armor penetration, mob behaviors and the PvP cap. Each swing counts once in a combo, even when it hits several targets.
 
 ## Coming from Better Weaponry 2.0
 
-The combat system of Better Weaponry 2.0 moved here. At first launch, Combat Reforged imports `rules.json`, the combat fields of your weapon files, the shield settings and your display preferences. The original files are not changed. Riposte, Reflective and Momentum on existing items keep working.
+The combat system of Better Weaponry 2.0 moved here. At first launch, Combat Ascended imports `rules.json`, the combat fields of your weapon files, the shield settings and your display preferences. The original files are not changed. Riposte, Reflective and Momentum on existing items keep working.
 
 ## Development
 

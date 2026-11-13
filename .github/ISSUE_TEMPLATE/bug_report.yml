@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in Combat Reforged does not work as expected
+description: Something in Combat Ascended does not work as expected
 labels: [bug]
 body:
   - type: markdown
@@ -25,7 +25,7 @@ body:
   - type: input
     id: mod-version
     attributes:
-      label: Combat Reforged version
+      label: Combat Ascended version
       placeholder: 2.0.0
     validations:
       required: true

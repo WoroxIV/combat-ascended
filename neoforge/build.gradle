@@ -36,7 +36,7 @@ neoForge {
                     '--output', rootProject.file('common/src/generated/resources').absolutePath,
                     '--existing', rootProject.file('common/src/main/resources').absolutePath
             // Sources des traductions lues par ModLanguageProvider (un fichier par langue).
-            systemProperty 'combatreforged.langSources', rootProject.file('common/src/main/lang').absolutePath
+            systemProperty 'combatascended.langSources', rootProject.file('common/src/main/lang').absolutePath
         }
     }
 
@@ -47,7 +47,7 @@ neoForge {
     }
 }
 
-ext.gameTestAnnotations = '@net.neoforged.neoforge.gametest.GameTestHolder(CombatReforged.MODID)\n@net.neoforged.neoforge.gametest.PrefixGameTestTemplate(false)'
+ext.gameTestAnnotations = '@net.neoforged.neoforge.gametest.GameTestHolder(CombatAscended.MODID)\n@net.neoforged.neoforge.gametest.PrefixGameTestTemplate(false)'
 ext.gameTestArena = 'empty'
 
 dependencies {
@@ -60,7 +60,7 @@ dependencies {
 }
 
 // Les tests tournent avec les vraies armes de Better Weaponry : rien de ce mod ne part dans le jar publié.
-def betterWeaponryJar = rootProject.file('../BetterWeaponry-1.21.1/neoforge/build/libs/better_weaponry-3.1.0+1.21.1-neoforge.jar')
+def betterWeaponryJar = rootProject.file('../../Better Weaponry/BetterWeaponry-1.21.1/neoforge/build/libs/better_weaponry-3.1.2+1.21.1-neoforge.jar')
 dependencies {
     if (betterWeaponryJar.exists()) compileOnly files(betterWeaponryJar)
 }

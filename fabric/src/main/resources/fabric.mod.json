@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "${mod_id}",
+  "provides": ["combat_reforged"],
   "version": "${mod_version}",
   "name": "${mod_name}",
   "description": "${mod_description}",
@@ -8,24 +9,24 @@
   "contact": {
     "homepage": "${mod_display_url}",
     "issues": "${mod_issue_tracker_url}",
-    "sources": "https://github.com/WoroxIV/combat-reforged"
+    "sources": "https://github.com/WoroxIV/combat-ascended"
   },
   "license": "${mod_license}",
-  "icon": "assets/combat_reforged/icon.png",
+  "icon": "assets/combat_ascended/icon.png",
   "environment": "*",
   "entrypoints": {
-    "fabric-gametest": ["com.combatreforged.gametest.CombatGameTests"],
-    "main": ["com.combatreforged.fabric.CombatReforgedFabric"],
-    "client": ["com.combatreforged.fabric.CombatReforgedFabricClient"],
-    "modmenu": ["com.combatreforged.fabric.ModMenuIntegration"],
-    "jei_mod_plugin": ["com.combatreforged.compat.jei.CombatReforgedJeiPlugin"],
-    "emi": ["com.combatreforged.compat.emi.CombatReforgedEmiPlugin"]
+    "fabric-gametest": ["com.combatascended.gametest.CombatGameTests"],
+    "main": ["com.combatascended.fabric.CombatAscendedFabric"],
+    "client": ["com.combatascended.fabric.CombatAscendedFabricClient"],
+    "modmenu": ["com.combatascended.fabric.ModMenuIntegration"],
+    "jei_mod_plugin": ["com.combatascended.compat.jei.CombatAscendedJeiPlugin"],
+    "emi": ["com.combatascended.compat.emi.CombatAscendedEmiPlugin"]
   },
   "mixins": [
-    "combatreforged.mixins.json",
-    "combatreforged.fabric.mixins.json"
+    "combatascended.mixins.json",
+    "combatascended.fabric.mixins.json"
   ],
-  "accessWidener": "combat_reforged.accesswidener",
+  "accessWidener": "combat_ascended.accesswidener",
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": "${minecraft_version}",

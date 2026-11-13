@@ -1,6 +1,0 @@
-{
-  "parent": "combat_reforged:tutorial/katana_base",
-  "textures": {
-    "layer0": "combat_reforged:item/tutorial/iron_katana"
-  }
-}

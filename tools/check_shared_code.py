@@ -4,11 +4,11 @@ from pathlib import Path
 
 SHARED = ["platform/PlatformHolder.java", "platform/Registered.java", "data/FieldSet.java", "data/JsonTree.java", "data/JsonUtil.java", "data/ModFiles.java"]
 bw = Path(sys.argv[1]) / "common/src/main/java/com/betterweaponry"
-cr = Path(sys.argv[2]) / "common/src/main/java/com/combatreforged"
+cr = Path(sys.argv[2]) / "common/src/main/java/com/combatascended"
 
 
 def normal(text):
-    return text.replace("Combat Reforged", "Better Weaponry").replace("com.combatreforged", "com.betterweaponry").replace("CombatReforged", "BetterWeaponry").replace("combat_reforged", "better_weaponry").replace("combatreforged", "betterweaponry")
+    return text.replace("Combat Ascended", "Better Weaponry").replace("com.combatascended", "com.betterweaponry").replace("CombatAscended", "BetterWeaponry").replace("combat_ascended", "better_weaponry").replace("combatascended", "betterweaponry")
 
 
 different = [name for name in SHARED if not (bw / name).exists() or normal((cr / name).read_text(encoding="utf-8")) != normal((bw / name).read_text(encoding="utf-8"))]

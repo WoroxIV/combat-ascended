@@ -65,6 +65,6 @@ sourceSets.main.java.srcDir(prepareGameTests)
 
 // Les GameTests servent seulement au développement : ils ne partent pas dans le jar publié.
 tasks.named('jar', Jar) {
-    exclude 'com/combatreforged/gametest/**'
-    exclude 'data/combat_reforged/structure/empty.nbt'
+    exclude 'com/combatascended/gametest/**'
+    exclude 'data/combat_ascended/structure/empty.nbt'
 }

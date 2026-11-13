@@ -1,0 +1,7 @@
+{
+  "parent": "combat_ascended:mace",
+  "disables_shield": true,
+  "sweep": {
+    "enabled": false
+  }
+}
